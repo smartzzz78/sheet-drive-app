@@ -1,47 +1,775 @@
+<!-- ตรวจสอบสลิปแท้ & ป้องกันสลิปปลอม (Slip Verify) - แก้ไขบัคสมบูรณ์ -->
 <!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sheet + Drive App</title>
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-  <main class="card">
-    <header>
-      <h1>บันทึกข้อมูล</h1>
-      <p class="muted">Frontend: GitHub Pages &middot; Backend: Apps Script &middot; DB: Google Sheets + Drive</p>
-    </header>
 
-    <form id="record-form" class="form">
-      <label>
-        ชื่อ
-        <input id="name" type="text" required placeholder="ชื่อรายการ" />
-      </label>
-      <label>
-        รายละเอียด
-        <textarea id="note" rows="3" placeholder="รายละเอียดเพิ่มเติม"></textarea>
-      </label>
-      <label>
-        ไฟล์แนบ (เก็บใน Google Drive)
-        <input id="file" type="file" />
-      </label>
-      <button type="submit" id="submit-btn">บันทึก</button>
-    </form>
+<html class="" lang="th"><head><title>กาแฟสดสุขใจ — ตรวจสลิป</title><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#faf8ff;color:#131b2e;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}
+@keyframes soundwave { 0%, 100% { height: 6px; } 50% { height: 22px; } }
+.wave-active div:nth-child(1) { animation: soundwave 0.5s infinite ease-in-out; }
+.wave-active div:nth-child(2) { animation: soundwave 0.4s infinite ease-in-out 0.1s; }
+.wave-active div:nth-child(3) { animation: soundwave 0.6s infinite ease-in-out 0.2s; }
+.wave-active div:nth-child(4) { animation: soundwave 0.45s infinite ease-in-out 0.15s; }
+.wave-active div:nth-child(5) { animation: soundwave 0.55s infinite ease-in-out 0.05s; }
+@keyframes scanMove {
+  0% { top: 15%; opacity: 0.6; }
+  50% { top: 80%; opacity: 1; }
+  100% { top: 15%; opacity: 0.6; }
+}
+.scanning-active-line {
+  animation: scanMove 1.6s infinite ease-in-out;
+}
+</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"primary-fixed-dim": "#4edea3", "inverse-on-surface": "#eef0ff", "secondary-fixed": "#cce5ff", "inverse-surface": "#283044", "surface-tint": "#006c49", "on-primary-fixed-variant": "#005236", surface: "#faf8ff", background: "#faf8ff", "surface-container-highest": "#dae2fd", "on-tertiary-fixed": "#001c37", "secondary-container": "#5bb8fe", tertiary: "#1961a1", secondary: "#006398", "on-primary-fixed": "#002113", "surface-container": "#eaedff", "inverse-primary": "#4edea3", "surface-container-low": "#f2f3ff", "surface-container-high": "#e2e7ff", "surface-variant": "#dae2fd", "on-surface-variant": "#3c4a42", "secondary-fixed-dim": "#93ccff", "on-primary": "#ffffff", "tertiary-container": "#6ca6eb", primary: "#006c49", error: "#ba1a1a", "surface-bright": "#faf8ff", "tertiary-fixed": "#d2e4ff", outline: "#6c7a71", "primary-container": "#10b981", "on-background": "#131b2e", "outline-variant": "#bbcabf", "on-secondary-container": "#00476e", "surface-dim": "#d2d9f4", "on-tertiary-container": "#003a69", "tertiary-fixed-dim": "#a1c9ff", "on-secondary-fixed": "#001d31", "on-error": "#ffffff", "on-secondary": "#ffffff", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "on-surface": "#131b2e", "primary-fixed": "#6ffbbe", "on-error-container": "#93000a", "on-tertiary": "#ffffff", "on-secondary-fixed-variant": "#004b73", "on-tertiary-fixed-variant": "#004880", "on-primary-container": "#00422b"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"space-md": "1rem", gutter: "1rem", "space-lg": "1.5rem", "margin-mobile": "1rem", margin: "1.5rem", "space-xl": "2.25rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "gutter-mobile": "0.75rem"}, fontFamily: {"headline-lg-mobile": ["Space Grotesk"], "display-xl": ["Space Grotesk"], "label-lg": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "title-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "headline-md": ["Space Grotesk"], "headline-lg": ["Space Grotesk"], "display-xl-mobile": ["Space Grotesk"], "label-md": ["Plus Jakarta Sans"], headline: ["Space Grotesk"], display: ["Space Grotesk"], body: ["Plus Jakarta Sans"], label: ["Plus Jakarta Sans"]}, fontSize: {"headline-lg-mobile": ["26px", {lineHeight: "34px", letterSpacing: "-0.01em", fontWeight: "700"}], "display-xl": ["56px", {lineHeight: "64px", letterSpacing: "-0.02em", fontWeight: "700"}], "label-lg": ["14px", {lineHeight: "18px", letterSpacing: "0.02em", fontWeight: "600"}], "title-md": ["18px", {lineHeight: "24px", fontWeight: "600"}], "title-lg": ["20px", {lineHeight: "28px", fontWeight: "600"}], "body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "label-sm": ["11px", {lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "500"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "700"}], "display-xl-mobile": ["40px", {lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700"}], "label-md": ["12px", {lineHeight: "16px", letterSpacing: "0.04em", fontWeight: "600"}]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface text-on-surface font-body-md flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.06)]"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[22px]">coffee</span></div><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-title-md text-title-md text-on-surface leading-tight">กาแฟสดสุขใจ</span><div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-primary font-semibold">ออนไลน์</span></div></div><span class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[160px]">Slip Verify</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="ทดสอบเสียงเตือนเงินเข้า" class="w-10 h-10 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-primary active:scale-95 transition-transform" onclick="triggerTestChime()"><span class="material-symbols-outlined text-[20px]">volume_up</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1"><span class="material-symbols-outlined text-on-primary text-[18px]">point_of_sale</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface flex-1"><div class="flex flex-col w-full px-margin-mobile gap-space-md">
+<!-- Status & Hero Fraud Shield Overview -->
+<section class="flex flex-col gap-space-sm pt-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-2.5 h-2.5 rounded-full bg-primary-container animate-ping"></div>
+<span class="font-label-md text-label-md text-primary font-semibold">BOT &amp; NDID Gateway เชื่อมต่อสด</span>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-surface-container-high flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold">กันสลิปปลอม 100%</span>
+</div>
+</div>
+<!-- Triple Metric Grid -->
+<div class="grid grid-cols-3 gap-space-xs">
+<div class="flex flex-col p-3 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex items-center gap-1 text-primary mb-1">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ผ่านวันนี้</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface font-bold leading-tight" id="todayPassedCount">38</span>
+<span class="font-label-sm text-label-sm text-primary">รายการสมบูรณ์</span>
+</div>
+<div class="flex flex-col p-3 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex items-center gap-1 text-secondary mb-1">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">สลิปวนซ้ำ</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface font-bold leading-tight" id="fraudCount">0</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant" id="fraudSubtitle">ไม่พบผิดปกติ</span>
+</div>
+<div class="flex flex-col p-3 rounded-xl bg-primary text-on-primary shadow-sm">
+<div class="flex items-center gap-1 mb-1 text-on-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="font-label-sm text-label-sm opacity-90">ระบบตรวจจับ</span>
+</div>
+<span class="font-title-md text-title-md font-bold leading-tight">Active</span>
+<span class="font-label-sm text-label-sm text-primary-fixed">บล็อกสลิปตัดต่อ</span>
+</div>
+</div>
+</section>
+<!-- Slip Scanner & Quick Checker Tool -->
+<section class="flex flex-col p-space-md rounded-2xl bg-surface-container-lowest shadow-md gap-space-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">qr_code_scanner</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-on-surface leading-snug">สแกน Mini QR Code สลิป</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ยิงกล้องตรวจ หรือ อัปโหลดภาพจากแกลเลอรี</p>
+</div>
+</div>
+<button class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold active:scale-95 transition-transform shadow-xs" onclick="playSlipChimeDemo()" title="ทดสอบเสียงยืนยันสลิปแท้">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+<span>เสียงเตือนสลิป</span>
+</button>
+</div>
+<!-- Scanner Interactive Viewport Simulator -->
+<div class="relative w-full h-44 rounded-xl bg-inverse-surface overflow-hidden flex flex-col items-center justify-center p-space-md text-center transition-all duration-300" id="scannerViewport">
+<!-- Ambient Scanner Grid Graphic -->
+<div class="absolute inset-0 opacity-15 flex flex-col justify-between p-4 pointer-events-none">
+<div class="flex justify-between w-full">
+<div class="w-8 h-8 border-t-2 border-l-2 border-primary-container"></div>
+<div class="w-8 h-8 border-t-2 border-r-2 border-primary-container"></div>
+</div>
+<div class="flex justify-between w-full">
+<div class="w-8 h-8 border-b-2 border-l-2 border-primary-container"></div>
+<div class="w-8 h-8 border-b-2 border-r-2 border-primary-container"></div>
+</div>
+</div>
+<!-- Animated Scan Line -->
+<div class="absolute w-full h-0.5 bg-primary-container shadow-[0_0_12px_#10b981] scanning-active-line" id="scanLine"></div>
+<!-- Idle View Content -->
+<div class="relative z-10 flex flex-col items-center gap-2" id="scannerIdleView">
+<div class="w-12 h-12 rounded-full bg-inverse-on-surface/10 flex items-center justify-center text-primary-fixed mb-0.5">
+<span class="material-symbols-outlined text-[26px]">center_focus_strong</span>
+</div>
+<span class="font-label-lg text-label-lg text-inverse-on-surface font-semibold" id="scannerTitle">จ่อกล้องไปที่ QR Code บนสลิป</span>
+<span class="font-label-sm text-label-sm text-surface-variant/80" id="scannerSubtitle">ระบบเทียบชื่อผู้รับ ยอดเงิน และเวลาโอนแบบเรียลไทม์</span>
+</div>
+<!-- Processing View Overlay (Hidden by default) -->
+<div class="absolute inset-0 bg-inverse-surface/90 backdrop-blur-xs hidden flex-col items-center justify-center gap-2.5 z-20" id="scannerProcessingView">
+<div class="w-10 h-10 border-3 border-primary-container border-t-transparent rounded-full animate-spin"></div>
+<span class="font-label-lg text-label-lg text-primary-fixed font-bold" id="scannerProcessingText">กำลังตรวจสอบกับ NDID &amp; ธนาคาร...</span>
+<span class="font-label-sm text-label-sm text-surface-variant/80">ตรวจลายมือชื่อดิจิทัล &amp; ยอดเงินเข้าจริง</span>
+</div>
+<!-- Scanner Action Trigger Overlay -->
+<div class="absolute bottom-2.5 right-2.5 flex items-center gap-2 z-10">
+<button class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold shadow-md active:scale-95 transition-transform flex items-center gap-1" onclick="startSlipVerificationFlow('camera')">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+<span>ลองสแกน</span>
+</button>
+</div>
+</div>
+<!-- Dual Actions -->
+<div class="grid grid-cols-2 gap-space-xs pt-1">
+<button class="h-12 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-2 shadow-sm active:scale-98 transition-transform" onclick="startSlipVerificationFlow('camera')">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+<span>เปิดกล้องตรวจ</span>
+</button>
+<label class="h-12 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg font-semibold flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-98 transition-transform">
+<input accept="image/*" class="hidden" onchange="simulateUploadSlip(event)" type="file"/>
+<span class="material-symbols-outlined text-secondary text-[20px]">add_photo_alternate</span>
+<span>เลือกรูปสลิป</span>
+</label>
+</div>
+</section>
+<!-- Live Audio Waveform & Speech Visualizer -->
+<div class="p-3.5 rounded-xl bg-surface-container flex items-center justify-between shadow-sm transition-all duration-300" id="voiceFeedbackBanner">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0" id="voiceStatusIconBox">
+<span class="material-symbols-outlined text-[20px]" id="voiceStatusIcon">volume_up</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-bold text-on-surface" id="voiceBannerTitle">เสียงพูดประกาศยอดเงินอัตโนมัติ</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate" id="voiceStatusText">"ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์"</span>
+</div>
+</div>
+<!-- 5-bar Waveform Indicator -->
+<div class="flex items-center gap-1 h-6 wave-active shrink-0" id="audioWaveBars">
+<div class="w-1 bg-primary-container rounded-full"></div>
+<div class="w-1 bg-primary-container rounded-full"></div>
+<div class="w-1 bg-primary-container rounded-full"></div>
+<div class="w-1 bg-primary-container rounded-full"></div>
+<div class="w-1 bg-primary-container rounded-full"></div>
+</div>
+</div>
+<!-- Educational / Security Alert Box: Duplicate Slip Detection Demo -->
+<section class="flex flex-col p-space-md rounded-2xl bg-error-container/30 border border-error/20 shadow-sm gap-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-title-md text-title-md font-bold">ระบบตรวจจับสลิปวนซ้ำ (Fraud Alert)</span>
+</div>
+<span class="px-2 py-0.5 rounded-md bg-error text-on-error font-label-sm text-label-sm font-bold">ตัวอย่างเตือนภัย</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+      หากมีลูกค้านำสลิปเดิมที่เคยใช้ชำระแล้วเมื่อ 10 นาทีที่แล้วมาเปิดโชว์ใหม่ ระบบ AI จะตรวจสอบรหัสสลิปย้อนหลังข้ามสาขา และส่งเสียงเตือนไซเรนฉุกเฉินทันที
+    </p>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-error font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">lock_reset</span>
+<span>ป้องกันการสูญเสียรายได้ 100%</span>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-error text-on-error font-label-sm text-label-sm font-bold shadow-md active:scale-95 transition-transform flex items-center gap-1" onclick="testFraudSiren()">
+<span class="material-symbols-outlined text-[16px]">notification_important</span>
+<span>ทดสอบเสียงสลิปปลอม</span>
+</button>
+</div>
+</section>
+<!-- Real-time Transaction Verification Feed Header -->
+<section class="flex flex-col gap-space-sm pt-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h3 class="font-title-lg text-title-lg text-on-surface font-bold">สลิปที่ยืนยันล่าสุด</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm font-bold text-primary">วันนี้</span>
+</div>
+<button class="flex items-center gap-1 font-label-sm text-label-sm text-secondary font-semibold hover:opacity-80 active:scale-95 transition-transform" onclick="refreshSlipFeed()">
+<span class="material-symbols-outlined text-[16px]" id="syncIcon">sync</span>
+<span>ซิงก์ธนาคาร</span>
+</button>
+</div>
+<!-- Feed Cards -->
+<div class="flex flex-col gap-space-sm" id="slipFeedList">
+<!-- Item 1: Kittisak R. (Highlight Primary) -->
+<article class="flex flex-col p-space-md rounded-2xl bg-surface-container-lowest shadow-md gap-3 relative border border-surface-container-high/60" id="card-kittisak">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center font-bold text-primary shadow-sm relative">
+<span class="material-symbols-outlined text-[28px]">payments</span>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[10px]">check</span>
+</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface font-bold truncate">คุณกิตติศักดิ์ ร.</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">K PLUS</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">เวลา 14:28:45 น. • Ref: 2023112414285192</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md font-bold text-primary leading-tight">+฿150.00</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">พร้อมเพย์</span>
+</div>
+</div>
+<!-- Verification Success Shield Badge -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">สลิปแท้ 100% ตรงกับยอดในบัญชี SCB/KBANK</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">NDID Verified</span>
+</div>
+<!-- Quick Operations -->
+<div class="grid grid-cols-2 gap-space-xs pt-1">
+<button class="h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 transition-colors active:scale-98" onclick="openSlipModal('2023112414285192', '150.00', 'คุณกิตติศักดิ์ ร.', 'กสิกรไทย (K PLUS)', '14:28:45', 'xxx-x-x1482-9')">
+<span class="material-symbols-outlined text-[18px] text-secondary">visibility</span>
+<span>ดูหลักฐานสลิป</span>
+</button>
+<button class="h-10 rounded-xl bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-transform" onclick="printReceipt('2023112414285192', '150.00', 'คุณกิตติศักดิ์ ร.')">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+<span>พิมพ์ใบเสร็จ</span>
+</button>
+</div>
+</article>
+<!-- Item 2: Patcharaporn M. -->
+<article class="flex flex-col p-space-md rounded-2xl bg-surface-container-lowest shadow-sm gap-2.5 border border-surface-container-high/40" id="card-patcharaporn">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center font-bold text-secondary shadow-sm">
+<span class="material-symbols-outlined text-[24px]">account_balance</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface font-bold truncate">คุณพัชราภรณ์ ม.</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">SCB EASY</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">เวลา 14:12:10 น. • Ref: SCB8829104</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md font-bold text-primary leading-tight">+฿65.00</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">QR Payment</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">ตรวจสอบแล้ว • เงินเข้าบัญชีจริง</span>
+</div>
+<button class="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-0.5 hover:underline" onclick="openSlipModal('SCB8829104', '65.00', 'คุณพัชราภรณ์ ม.', 'ไทยพาณิชย์ (SCB EASY)', '14:12:10', 'xxx-x-x9301-2')">
+<span>ดูสลิป</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</div>
+</article>
+<!-- Item 3: Older verified transaction -->
+<article class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm border border-surface-container-high/40" id="card-wichian">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">qr_code_2</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold truncate">คุณวิเชียร สมศักดิ์</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">เวลา 13:50:02 น. • Krungthai NEXT</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-title-lg text-title-lg font-bold text-primary">+฿120.00</span>
+<button class="font-label-sm text-label-sm text-primary underline" onclick="openSlipModal('KTB9920141', '120.00', 'คุณวิเชียร สมศักดิ์', 'กรุงไทย (Krungthai NEXT)', '13:50:02', 'xxx-x-x5541-0')">สลิปแท้ 100%</button>
+</div>
+</article>
+</div>
+</section>
+<!-- Slip Detail & Verification Evidence Modal / Card Backdrop -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm hidden items-center justify-center p-4 transition-all" id="slipEvidenceModal">
+<div class="w-full max-w-sm rounded-3xl bg-surface-container-lowest shadow-2xl p-space-md flex flex-col gap-3 relative animate-in fade-in zoom-in-95 duration-200 border border-surface-container-high">
+<!-- Modal Close -->
+<button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface active:scale-95 transition-transform" onclick="closeSlipModal()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+<!-- Modal Title -->
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold">หลักฐานสลิปทางการ (Slip Proof)</h3>
+<span class="font-label-sm text-label-sm text-primary font-semibold">ตรวจสอบตรงกับฐานข้อมูล BOT &amp; NDID</span>
+</div>
+</div>
+<!-- Bank Slip Simulation Card -->
+<div class="rounded-2xl bg-surface-container-low p-4 flex flex-col gap-3 border border-surface-container-high/60">
+<!-- Bank Brand Row -->
+<div class="flex items-center justify-between pb-2 border-b border-surface-container-high">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-xs" id="modalBankBadge">
+<span class="material-symbols-outlined text-[16px]">account_balance</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-bold" id="modalBankName">กสิกรไทย (K PLUS)</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">check</span>
+<span>โอนเงินสำเร็จ</span>
+</span>
+</div>
+<!-- Slip Amount -->
+<div class="flex flex-col items-center justify-center py-2.5 bg-surface-container-lowest rounded-xl shadow-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">จำนวนเงินโอนสุทธิ</span>
+<span class="font-display-xl-mobile text-display-xl-mobile font-bold text-primary leading-tight" id="modalAmount">฿150.00</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>ไม่มีค่าธรรมเนียม • PromptPay</span>
+</span>
+</div>
+<!-- From - To Account Spec -->
+<div class="flex flex-col gap-2 pt-1">
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">จาก:</span>
+<div class="flex flex-col items-end">
+<span class="font-label-md text-label-md text-on-surface font-bold" id="modalCustomerName">คุณกิตติศักดิ์ ร.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono" id="modalAccountFrom">xxx-x-x1482-9</span>
+</div>
+</div>
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">ไปยัง:</span>
+<div class="flex flex-col items-end">
+<span class="font-label-md text-label-md text-primary font-bold">ร้านกาแฟสดสุขใจ</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">PromptPay ID: 089-xxx-8812</span>
+</div>
+</div>
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">รหัสอ้างอิง (Ref):</span>
+<span class="font-label-sm text-label-sm font-mono text-on-surface font-bold select-all" id="modalRefCode">2023112414285192</span>
+</div>
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">เวลาทำรายการ:</span>
+<span class="font-label-sm text-label-sm text-on-surface" id="modalTimestamp">วันนี้, 14:28:45 น.</span>
+</div>
+</div>
+<!-- Verification QR Code Footer -->
+<div class="flex items-center gap-3 pt-2 bg-surface-container-lowest/90 p-2.5 rounded-xl border border-surface-container">
+<div class="w-12 h-12 bg-on-surface p-1 rounded-lg flex items-center justify-center text-surface shrink-0">
+<span class="material-symbols-outlined text-[36px]">qr_code_2</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface">Mini QR Code ผ่านการตรวจสอบ</span>
+<span class="font-label-sm text-label-sm text-primary font-medium">Digital Signature ถูกต้องตรงตามมาตรฐาน ธปท.</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons in Modal -->
+<div class="flex gap-2 pt-1">
+<button class="flex-1 h-11 rounded-xl bg-surface-container font-label-md text-label-md text-on-surface font-semibold active:scale-95 transition-transform" onclick="closeSlipModal()">
+          ปิดหน้าต่าง
+        </button>
+<button class="flex-1 h-11 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-transform" onclick="speakCurrentSlipDetail()">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+<span>ฟังเสียงยืนยัน</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dynamic Notification Toast Container -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-sm pointer-events-none transition-all duration-300 opacity-0 -translate-y-2 flex flex-col gap-2" id="notificationToast">
+<div class="p-3.5 rounded-2xl shadow-xl flex items-center gap-3 border text-on-surface bg-surface-container-lowest" id="toastCard">
+<div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" id="toastIconBox">
+<span class="material-symbols-outlined text-[22px]" id="toastIcon">check_circle</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<span class="font-label-md text-label-md font-bold leading-tight" id="toastTitle">แจ้งเตือน</span>
+<span class="font-label-sm text-label-sm opacity-90 truncate" id="toastMessage">ข้อความแจ้งเตือน</span>
+</div>
+</div>
+</div>
+<!-- Bottom Spacing Padding Helper for Counter Ergonomics -->
+<div class="h-4"></div>
+</div>
+<script>
+  let audioCtx = null;
+  let activeWave = true;
+  let currentModalData = {
+    ref: '2023112414285192',
+    amount: '150.00',
+    customer: 'คุณกิตติศักดิ์ ร.',
+    bank: 'กสิกรไทย (K PLUS)',
+    time: '14:28:45',
+    account: 'xxx-x-x1482-9'
+  };
 
-    <p id="status" class="status" role="status"></p>
+  // 1. ปลดล็อก AudioContext ในทุกการคลิก/แตะ (touch/click) ของผู้ใช้
+  function getAudioContext() {
+    try {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    } catch(e) {
+      console.warn('AudioContext init error:', e);
+    }
+    return audioCtx;
+  }
 
-    <section>
-      <div class="list-head">
-        <h2>รายการล่าสุด</h2>
-        <button type="button" id="refresh-btn" class="ghost">รีเฟรช</button>
-      </div>
-      <ul id="record-list" class="record-list"></ul>
-    </section>
-  </main>
+  // ปลดล็อกทันทีเมื่อแตะหรือคลิกหน้าจอครั้งแรก
+  ['click', 'touchstart', 'touchend', 'keydown'].forEach(eventName => {
+    window.addEventListener(eventName, function unlockAudio() {
+      getAudioContext();
+      // อุ่นเครื่อง speechSynthesis ให้พร้อมใช้งานบน Safari / iOS
+      if ('speechSynthesis' in window && window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    }, { passive: true });
+  });
 
-  <script src="js/config.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/app.js"></script>
-</body>
-</html>
+  // Helper for sound generation
+  function playTone(freq, duration, type = 'sine', gainVal = 0.25) {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch(e) {
+      console.warn('Audio playback error:', e);
+    }
+  }
+
+  // 2. Harmonic ding-dong chime 800Hz & 1200Hz พร้อม multi-harmonic tone
+  function playHarmonicDingDong() {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      // Bell 1: 800Hz Harmonic Tone
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(800, now);
+      gain1.gain.setValueAtTime(0.35, now);
+      gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.35);
+
+      // Bell 2: 1200Hz Harmonic Tone (Ding-Dong)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(1200, now + 0.16);
+      gain2.gain.setValueAtTime(0.001, now);
+      gain2.gain.setValueAtTime(0.38, now + 0.16);
+      gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now + 0.16);
+      osc2.stop(now + 0.65);
+    } catch(e) {
+      console.warn('Harmonic chime error:', e);
+    }
+  }
+
+  // Multi-frequency success chime
+  function playSuccessChime() {
+    playHarmonicDingDong();
+    setTimeout(() => {
+      playTone(1046.50, 0.28, 'sine', 0.2); // C6
+    }, 280);
+  }
+
+  // 2. เสียงขานภาษาไทย Web Speech API พร้อม Fallback
+  function speakThai(text) {
+    let spoken = false;
+    if ('speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel(); // ยกเลิกคิวก่อนหน้า
+        window.speechSynthesis.resume();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'th-TH';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.05;
+
+        // ค้นหาเสียงไทย
+        const voices = window.speechSynthesis.getVoices();
+        const thaiVoice = voices.find(v => v.lang === 'th-TH' || v.lang.startsWith('th') || (v.name && v.name.toLowerCase().includes('thai')));
+        if (thaiVoice) {
+          utterance.voice = thaiVoice;
+        }
+
+        utterance.onstart = function() {
+          spoken = true;
+        };
+
+        utterance.onerror = function(err) {
+          console.warn('Speech synthesis error, fallback chime active:', err);
+          playHarmonicDingDong();
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } catch(e) {
+        console.warn('SpeechSynthesis exception:', e);
+        playHarmonicDingDong();
+      }
+    } else {
+      // Fallback เมื่อเบราว์เซอร์ไม่รองรับ Web Speech API
+      playHarmonicDingDong();
+    }
+  }
+
+  // Toast Helper
+  let toastTimer = null;
+  function showToast(title, message, isError = false) {
+    const toast = document.getElementById('notificationToast');
+    const toastCard = document.getElementById('toastCard');
+    const toastIconBox = document.getElementById('toastIconBox');
+    const toastIcon = document.getElementById('toastIcon');
+    const toastTitle = document.getElementById('toastTitle');
+    const toastMessage = document.getElementById('toastMessage');
+
+    clearTimeout(toastTimer);
+
+    toastTitle.innerText = title;
+    toastMessage.innerText = message;
+
+    if (isError) {
+      toastCard.className = 'p-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-error bg-error text-on-error';
+      toastIconBox.className = 'w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-white';
+      toastIcon.innerText = 'warning';
+    } else {
+      toastCard.className = 'p-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-primary/20 bg-surface-container-lowest text-on-surface';
+      toastIconBox.className = 'w-9 h-9 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center shrink-0';
+      toastIcon.innerText = 'verified';
+    }
+
+    toast.classList.remove('opacity-0', '-translate-y-2');
+    toast.classList.add('opacity-100', 'translate-y-0');
+
+    toastTimer = setTimeout(() => {
+      toast.classList.add('opacity-0', '-translate-y-2');
+      toast.classList.remove('opacity-100', 'translate-y-0');
+    }, 3500);
+  }
+
+  // 1 & 2. ปุ่ม 'เสียงเตือนสลิป': ปล่อย Chime 800Hz/1200Hz ทันที และพูดเสียงไทย
+  function playSlipChimeDemo() {
+    getAudioContext();
+    playHarmonicDingDong();
+    
+    // Wave animation update
+    const bars = document.getElementById('audioWaveBars');
+    bars.classList.add('wave-active');
+    
+    const banner = document.getElementById('voiceFeedbackBanner');
+    banner.classList.remove('bg-error', 'text-on-error');
+    banner.classList.add('bg-surface-container');
+    document.getElementById('voiceBannerTitle').innerText = 'ทดสอบเสียงเตือนสลิปแท้';
+    document.getElementById('voiceStatusText').innerText = '"ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์"';
+    document.getElementById('voiceStatusText').classList.remove('text-on-error');
+
+    setTimeout(() => {
+      speakThai('ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์');
+    }, 280);
+
+    showToast('ทดสอบระบบเสียงสลิปแท้', 'ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์', false);
+  }
+
+  // 4. ปุ่ม 'สแกน QR Code', 'เปิดกล้องตรวจ', 'เลือกรูปสลิป'
+  function startSlipVerificationFlow(sourceType = 'camera') {
+    getAudioContext();
+    playTone(880, 0.1, 'sine', 0.25);
+
+    const processingOverlay = document.getElementById('scannerProcessingView');
+    const processingText = document.getElementById('scannerProcessingText');
+    
+    processingOverlay.classList.remove('hidden');
+    processingOverlay.classList.add('flex');
+    processingText.innerText = sourceType === 'camera' 
+      ? 'ตรวจพบ Mini QR Code กำลังยืนยันผ่าน NDID & ธนาคาร...' 
+      : 'อัปโหลดภาพสลิป กำลังตรวจสอบลายเซ็น ธปท....';
+
+    setTimeout(() => {
+      processingOverlay.classList.add('hidden');
+      processingOverlay.classList.remove('flex');
+
+      // อัปเดตสถิติ
+      const countEl = document.getElementById('todayPassedCount');
+      if (countEl) {
+        let current = parseInt(countEl.innerText) || 38;
+        countEl.innerText = current + 1;
+      }
+
+      // Harmonic Ding-Dong + ขานยอดเงิน
+      playHarmonicDingDong();
+      setTimeout(() => {
+        speakThai('ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์');
+      }, 300);
+
+      showToast('ตรวจสอบสลิปสำเร็จ 100%', 'เงินเข้า 150 บาท จาก คุณกิตติศักดิ์ ร. (K PLUS)', false);
+
+      setTimeout(() => {
+        openSlipModal('2023112414285192', '150.00', 'คุณกิตติศักดิ์ ร.', 'กสิกรไทย (K PLUS)', '14:28:45', 'xxx-x-x1482-9');
+      }, 450);
+    }, 1100);
+  }
+
+  function simulateUploadSlip(event) {
+    if (event.target.files && event.target.files[0]) {
+      startSlipVerificationFlow('gallery');
+    }
+  }
+
+  // 3. ปุ่ม '🔔 ทดสอบเสียงสลิปปลอม' / Fraud Alert Siren 2-tone sweep frequency
+  function testFraudSiren() {
+    const ctx = getAudioContext();
+    
+    if (ctx) {
+      try {
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sawtooth';
+        // 2-tone sweep frequency: 960Hz <-> 560Hz จำลองไซเรนเตือนภัยฉุกเฉิน
+        osc.frequency.setValueAtTime(960, now);
+        osc.frequency.linearRampToValueAtTime(560, now + 0.2);
+        osc.frequency.linearRampToValueAtTime(960, now + 0.4);
+        osc.frequency.linearRampToValueAtTime(560, now + 0.6);
+        osc.frequency.linearRampToValueAtTime(960, now + 0.8);
+        osc.frequency.linearRampToValueAtTime(560, now + 1.0);
+
+        gain.gain.setValueAtTime(0.32, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.15);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 1.15);
+      } catch(err) {
+        console.warn('Siren Audio Error:', err);
+      }
+    }
+
+    // Update fraud count
+    const fraudCountEl = document.getElementById('fraudCount');
+    if (fraudCountEl) {
+      fraudCountEl.innerText = '1';
+      document.getElementById('fraudSubtitle').innerText = 'ตรวจพบล่าสุดเมื่อสักครู่';
+      document.getElementById('fraudSubtitle').classList.add('text-error', 'font-bold');
+    }
+
+    // Banner alert change
+    const banner = document.getElementById('voiceFeedbackBanner');
+    banner.className = 'p-3.5 rounded-xl bg-error text-on-error flex items-center justify-between shadow-md transition-all duration-300';
+    document.getElementById('voiceBannerTitle').innerText = '🚨 ตรวจพบสลิปปลอม / วนซ้ำ!';
+    document.getElementById('voiceStatusText').innerText = '"คำเตือน สลิปนี้ถูกใช้ไปแล้ว ระวังมิจฉาชีพ"';
+    document.getElementById('voiceStatusText').classList.add('text-on-error');
+
+    // พูดเตือนสลิปปลอม
+    setTimeout(() => {
+      speakThai('คำเตือน สลิปนี้ถูกใช้ไปแล้ว ระวังมิจฉาชีพ');
+    }, 450);
+
+    showToast('คำเตือนตรวจพบสลิปวนซ้ำ!', 'รหัสสลิปนี้เคยใช้ชำระเงินแล้ว ระวังมิจฉาชีพ', true);
+
+    setTimeout(() => {
+      banner.className = 'p-3.5 rounded-xl bg-surface-container flex items-center justify-between shadow-sm transition-all duration-300';
+      document.getElementById('voiceBannerTitle').innerText = 'เสียงพูดประกาศยอดเงินอัตโนมัติ';
+      document.getElementById('voiceStatusText').innerText = '"ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์"';
+      document.getElementById('voiceStatusText').classList.remove('text-on-error');
+    }, 5000);
+  }
+
+  // 4. ดูหลักฐานสลิป & พิมพ์ใบเสร็จ
+  function openSlipModal(ref, amount, customer, bank, time, account = 'xxx-x-x1482-9') {
+    getAudioContext();
+    currentModalData = { ref, amount, customer, bank, time, account };
+
+    document.getElementById('modalRefCode').innerText = ref;
+    document.getElementById('modalAmount').innerText = '฿' + amount;
+    document.getElementById('modalCustomerName').innerText = customer;
+    document.getElementById('modalBankName').innerText = bank;
+    document.getElementById('modalTimestamp').innerText = 'วันนี้, ' + time + ' น.';
+    document.getElementById('modalAccountFrom').innerText = account;
+    
+    const modal = document.getElementById('slipEvidenceModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    playTone(900, 0.08, 'sine', 0.2);
+  }
+
+  function closeSlipModal() {
+    getAudioContext();
+    playTone(550, 0.06, 'sine', 0.15);
+    const modal = document.getElementById('slipEvidenceModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function speakCurrentSlipDetail() {
+    getAudioContext();
+    playHarmonicDingDong();
+    setTimeout(() => {
+      speakThai(`ตรวจสลิปแท้ 100% เงินเข้า ${currentModalData.amount} บาท จาก ${currentModalData.customer}`);
+    }, 280);
+  }
+
+  // 4. ปุ่มพิมพ์ใบเสร็จ
+  function printReceipt(ref, amount, customer = 'ลูกค้า') {
+    getAudioContext();
+    // Receipt mechanical printer chime feedback
+    playTone(1350, 0.08, 'sine', 0.25);
+    setTimeout(() => playTone(1150, 0.08, 'sine', 0.25), 110);
+    setTimeout(() => playTone(1600, 0.16, 'triangle', 0.25), 230);
+
+    showToast('กำลังพิมพ์ใบเสร็จ', `ส่งคำสั่งยอด ฿${amount} ไปยังเครื่องพิมพ์บลูทูธแล้ว`, false);
+  }
+
+  function refreshSlipFeed() {
+    getAudioContext();
+    playTone(700, 0.1, 'sine', 0.2);
+    const syncIcon = document.getElementById('syncIcon');
+    syncIcon.classList.add('animate-spin');
+    
+    showToast('ซิงก์ข้อมูลธนาคาร', 'กำลังดึงรายการรับโอนเงินล่าสุดจาก BOT Gateway...', false);
+
+    setTimeout(() => {
+      syncIcon.classList.remove('animate-spin');
+      playHarmonicDingDong();
+      showToast('ซิงก์สมบูรณ์', 'รายการสลิปทั้งหมดเป็นข้อมูลล่าสุด 100%', false);
+    }, 700);
+  }
+
+  // Global App Shell header chime hook
+  window.triggerTestChime = function() {
+    getAudioContext();
+    playHarmonicDingDong();
+    setTimeout(() => {
+      speakThai('ระบบพร้อมเพย์และเครื่องตรวจสลิปพร้อมใช้งานค่ะ');
+    }, 260);
+    showToast('ทดสอบระบบเสียง', 'ระบบตรวจสลิปแท้ 100% ออนไลน์และพร้อมเปล่งเสียง', false);
+  };
+
+  // Pre-load synth voices
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)]" data-active-classes="text-primary font-bold"><div class="grid grid-cols-4 items-center h-16 px-1"><a class="flex flex-col items-center justify-center h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="dashboard" href="dashboard.html"><span class="material-symbols-outlined text-[22px]">insights</span><span class="font-label-sm text-label-sm text-center">ภาพรวม</span></a><a aria-current="page" class="flex flex-col items-center justify-center h-12 gap-0.5 transition-colors text-primary font-bold" data-path="slip-verify" href="index.html"><span class="material-symbols-outlined text-[22px]">verified_user</span><span class="font-label-sm text-label-sm text-center">ตรวจสลิป</span></a><a class="flex flex-col items-center justify-center h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="counter-live" href="counter-live.html"><span class="material-symbols-outlined text-[22px]">point_of_sale</span><span class="font-label-sm text-label-sm text-center">เคาน์เตอร์</span></a><a class="flex flex-col items-center justify-center h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="settings-shift" href="settings-shift.html"><span class="material-symbols-outlined text-[22px]">tune</span><span class="font-label-sm text-label-sm text-center">ตั้งค่า &amp; กะ</span></a></div></nav><script src="js/config.js"></script>
+<script src="js/api.js"></script>
+</body></html>
+

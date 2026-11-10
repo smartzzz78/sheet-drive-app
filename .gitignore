@@ -5,3 +5,7 @@ node_modules/
 Thumbs.db
 .vscode/
 .idea/
+
+# ไฟล์ต้นฉบับที่รวมทุกหน้าไว้ก่อนแยกเป็น docs/*.html (ไม่ต้อง push)
+code.txt
+code app realtime money.txt

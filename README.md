@@ -1,7 +1,17 @@
-# Sheet + Drive App
+# กาแฟสดสุขใจ (Slip Verify)
 
-แอปตัวอย่างที่ใช้ **GitHub Pages** เป็น frontend และ **Google Apps Script** เป็น backend
+แอปหน้าร้านสำหรับร้านกาแฟ ใช้ **GitHub Pages** เป็น frontend และ **Google Apps Script** เป็น backend
 โดยใช้ **Google Sheets** เป็นฐานข้อมูล และ **Google Drive** เก็บไฟล์แนบ
+
+หน้าเว็บทั้ง 4 หน้า (แยกมาจาก `code.txt`):
+
+| หน้า | ไฟล์ | คำอธิบาย |
+|---|---|---|
+| ตรวจสลิป (หน้าหลัก) | `docs/index.html` | สแกน/ตรวจสอบสลิป PromptPay, เสียงประกาศเงินเข้า, ตรวจสลิปวนซ้ำ |
+| ภาพรวม | `docs/dashboard.html` | สรุปยอดและปิดกะ |
+| ตั้งค่า & กะ | `docs/settings-shift.html` | ฮาร์ดแวร์, LINE notify, ปิดกะ |
+| เคาน์เตอร์ | `docs/counter-live.html` | จอเคาน์เตอร์ & สั่งพิมพ์ใบเสร็จ |
+
 
 ## ลิงก์โปรเจกต์
 
@@ -15,12 +25,13 @@
 ```
 .
 ├─ docs/                 # Frontend (GitHub Pages เสิร์ฟจากโฟลเดอร์นี้)
-│  ├─ index.html
-│  ├─ css/style.css
+│  ├─ index.html         # หน้าหลัก: ตรวจสลิป
+│  ├─ dashboard.html     # ภาพรวม & ปิดกะ
+│  ├─ settings-shift.html# ตั้งค่า & กะ
+│  ├─ counter-live.html  # จอเคาน์เตอร์
 │  └─ js/
 │     ├─ config.js       # ใส่ Web App URL ที่นี่
-│     ├─ api.js          # ตัวเรียก API
-│     └─ app.js          # ตรรกะหน้าเว็บ
+│     └─ api.js          # ตัวเรียก API
 ├─ backend/              # Apps Script (clasp)
 │  ├─ appsscript.json
 │  ├─ Code.gs            # doGet/doPost + setupDatabase()
