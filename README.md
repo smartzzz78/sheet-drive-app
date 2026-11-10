@@ -3,6 +3,15 @@
 แอปตัวอย่างที่ใช้ **GitHub Pages** เป็น frontend และ **Google Apps Script** เป็น backend
 โดยใช้ **Google Sheets** เป็นฐานข้อมูล และ **Google Drive** เก็บไฟล์แนบ
 
+## ลิงก์โปรเจกต์
+
+| ส่วน | ลิงก์ |
+|---|---|
+| GitHub repo | https://github.com/smartzzz78/sheet-drive-app |
+| เว็บไซต์ (GitHub Pages) | https://smartzzz78.github.io/sheet-drive-app/ |
+| Apps Script editor | https://script.google.com/d/1Y7EnQMOskpC8JSmM7TYyTEFL1P4J83cbh3U77rgpZrm8bnR1ic0ntaxh/edit |
+| Web App endpoint | https://script.google.com/macros/s/AKfycbynj48o22DK28qT63zH1nYS3t9rakgb47f1YJvrdEEcL8riWG6ba768cEyiIZ0uC5ZryQ/exec |
+
 ```
 .
 ├─ docs/                 # Frontend (GitHub Pages เสิร์ฟจากโฟลเดอร์นี้)
