@@ -171,7 +171,7 @@
       String(rec.customer || 'ลูกค้า'),
       String(rec.bank || 'ธนาคาร -'),
       fmtTime(rec.createdAt),
-      String(rec.note || '-')
+      rec.note ? 'หมายเหตุ: ' + rec.note : 'ไม่ระบุบัญชีต้นทาง'
     );
   };
 

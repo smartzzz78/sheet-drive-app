@@ -75,14 +75,30 @@ function listRecords_(limitParam) {
 
   for (var i = 0; i < values.length; i++) {
     var row = values[i];
-    if (String(row[0]).trim() === '') continue;
+    var id = String(row[0]).trim();
+
+    // รองรับแถวที่พิมพ์เพิ่มเองใน Sheet (ไม่ได้ใส่ id):
+    // - แถวว่างทั้งแถว = ข้าม
+    // - มีข้อมูลแต่ไม่มี id = สร้าง id สังเคราะห์จากค่าในแถว เพื่อให้ประกาศเสียงได้
+    if (!id) {
+      var hasData = false;
+      for (var c = 1; c < HEADERS.length; c++) {
+        if (String(row[c]).trim() !== '') { hasData = true; break; }
+      }
+      if (!hasData) continue;
+      id = 'manual-' + [row[1], row[2], row[3], row[4], row[5], row[8]].join('|');
+    }
+
+    // แปลงยอดเงินแบบทนทาน: 1500 / "1,500" / "฿1,500.00" ทำงานได้ทั้งหมด
+    var amountNum = Number(String(row[4]).replace(/[,\s฿]/g, ''));
+    if (!isFinite(amountNum)) amountNum = 0;
 
     records.push({
-      id: String(row[0]),
+      id: id,
       ref: String(row[1] || ''),
       customer: String(row[2] || ''),
       bank: String(row[3] || ''),
-      amount: Number(row[4]) || 0,
+      amount: amountNum,
       note: String(row[5] || ''),
       fileName: String(row[6] || ''),
       fileUrl: String(row[7] || ''),
