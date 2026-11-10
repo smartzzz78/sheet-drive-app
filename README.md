@@ -3,11 +3,12 @@
 แอปหน้าร้านสำหรับร้านกาแฟ ใช้ **GitHub Pages** เป็น frontend และ **Google Apps Script** เป็น backend
 โดยใช้ **Google Sheets** เป็นฐานข้อมูล และ **Google Drive** เก็บไฟล์แนบ
 
-หน้าเว็บทั้ง 4 หน้า (แยกมาจาก `code.txt`):
+หน้าเว็บทั้ง 5 หน้า (แยกมาจาก `code app realtime money.txt`):
 
 | หน้า | ไฟล์ | คำอธิบาย |
 |---|---|---|
-| ตรวจสลิป (หน้าหลัก) | `docs/index.html` | สแกน/ตรวจสอบสลิป PromptPay, เสียงประกาศเงินเข้า, ตรวจสลิปวนซ้ำ |
+| ตรวจสลิป (หน้าหลัก) | `docs/index.html` | ฟีดรายการเงินเข้าจาก Google Sheets + **อ่านออกเสียงยอดเงินเข้าอัตโนมัติ** (poll ทุก 15 วิ) |
+| เพิ่มเงินเข้า | `docs/money-in.html` | ฟอร์มบันทึกยอดรับเงิน บันทึกลง Sheets + อัปโหลดรูปสลิปขึ้น Drive |
 | ภาพรวม | `docs/dashboard.html` | สรุปยอดและปิดกะ |
 | ตั้งค่า & กะ | `docs/settings-shift.html` | ฮาร์ดแวร์, LINE notify, ปิดกะ |
 | เคาน์เตอร์ | `docs/counter-live.html` | จอเคาน์เตอร์ & สั่งพิมพ์ใบเสร็จ |
@@ -19,22 +20,24 @@
 |---|---|
 | GitHub repo | https://github.com/smartzzz78/sheet-drive-app |
 | เว็บไซต์ (GitHub Pages) | https://smartzzz78.github.io/sheet-drive-app/ |
-| Apps Script editor | https://script.google.com/d/1Y7EnQMOskpC8JSmM7TYyTEFL1P4J83cbh3U77rgpZrm8bnR1ic0ntaxh/edit |
-| Web App endpoint | https://script.google.com/macros/s/AKfycbynj48o22DK28qT63zH1nYS3t9rakgb47f1YJvrdEEcL8riWG6ba768cEyiIZ0uC5ZryQ/exec |
+| Apps Script editor | https://script.google.com/d/1t4YAMXsn4pqoQa8jigMv1xrNVvN1iGYKn7v7IrjWXijtryUvjvsoFuxh/edit |
+| Web App endpoint | https://script.google.com/macros/s/AKfycbxvcU7CAxGGqlEU5mZxl_OIrbDIPqM7fv8Jen--ijrApeZWOlbRZrkBhAsyDm-xja7O/exec |
 
 ```
 .
 ├─ docs/                 # Frontend (GitHub Pages เสิร์ฟจากโฟลเดอร์นี้)
-│  ├─ index.html         # หน้าหลัก: ตรวจสลิป
+│  ├─ index.html         # หน้าหลัก: ตรวจสลิป + อ่านเสียงยอดเงินเข้า
+│  ├─ money-in.html      # ฟอร์มบันทึกเงินเข้า
 │  ├─ dashboard.html     # ภาพรวม & ปิดกะ
 │  ├─ settings-shift.html# ตั้งค่า & กะ
 │  ├─ counter-live.html  # จอเคาน์เตอร์
 │  └─ js/
 │     ├─ config.js       # ใส่ Web App URL ที่นี่
-│     └─ api.js          # ตัวเรียก API
+│     ├─ api.js          # ตัวเรียก API
+│     └─ app.js          # ดึงข้อมูล + อ่านเสียงยอดเงินเข้า (ใช้ใน index.html)
 ├─ backend/              # Apps Script (clasp)
 │  ├─ appsscript.json
-│  ├─ Code.gs            # doGet/doPost + setupDatabase()
+│  ├─ Code.gs            # doGet/doPost + ping/setupDatabase()
 │  ├─ Sheets.gs          # CRUD กับ Google Sheets
 │  └─ Drive.gs           # อัปโหลดไฟล์ขึ้น Drive
 ├─ scripts/
@@ -76,41 +79,37 @@ gh auth status
 clasp show-authorized-user
 ```
 
-## ขั้นตอนที่ 2 — เปิดโปรเจกต์ Apps Script
+## ขั้นตอนที่ 2 — ฐานข้อมูล (Google Sheet ที่ผูกกับสคริปต์)
 
-> โปรเจกต์ Apps Script ถูกสร้างไว้แล้ว (ดู `backend/.clasp.json`)
-> ถ้าต้องสร้างใหม่บนเครื่องอื่น ให้รัน `npm run gas:create`
+โปรเจกต์ Apps Script นี้ผูกกับ Google Sheet อยู่แล้ว — **ไม่ต้องสร้างสเปรดชีตใหม่**
+เมื่อมีการเรียก API ครั้งแรก (หรือรัน `setupDatabase` ใน editor) ระบบจะ:
 
-เปิดโปรเจกต์:
+- สร้าง **header database** ให้อัตโนมัติในชีตแรกของไฟล์:
+  `id | ref | customer | bank | amount | note | fileName | fileUrl | createdAt`
+- หาโฟลเดอร์ Drive ชื่อ `App Uploads` (มีอยู่แล้วใช้เดิม ไม่มีค่อยสร้าง)
 
-```powershell
-clasp open
-```
+รันทดสอบ: เปิด editor (**Deploy แล้วต้อง authorize ก่อน 1 ครั้ง — ดูขั้นตอนที่ 3**) → เลือกฟังก์ชัน `setupDatabase` → Run
+จะได้ log แสดง `spreadsheetId`, `sheetName`, `rowCount`
 
-ในหน้า Apps Script editor:
-1. เลือกฟังก์ชัน **`setupDatabase`** จาก dropdown แล้วกด **Run**
-2. ครั้งแรกจะขออนุญาต (Authorize) → เลือกบัญชี → Advanced → Go to project → Allow
-3. ดูผลลัพธ์ใน Execution log จะได้ `spreadsheetUrl` และ `folderUrl`
-   (สเปรดชีตชื่อ `App Database`, โฟลเดอร์ Drive ชื่อ `App Uploads` ถูกสร้างให้อัตโนมัติ)
+> ถ้าต้องการใช้ชีตอื่น (ไม่ใช่ชีตแรก) ให้ตั้ง `SHEET_NAME` ใน Script Properties
+> ถ้าสคริปต์ไม่ได้ผูกกับสเปรดชีต ให้ตั้ง `SPREADSHEET_ID` ใน Script Properties
 
-## ขั้นตอนที่ 3 — Deploy Web App
+## ขั้นตอนที่ 3 — Deploy Web App + อนุญาตสคริปต์ (สำคัญ)
 
-ในหน้า editor: **Deploy → New deployment → Web app**
-
-- Description: `v1`
-- Execute as: **Me**
-- Who has access: **Anyone**
-
-กด Deploy แล้วคัดลอก **Web app URL** (ลงท้ายด้วย `/exec`)
-
-หรือใช้คำสั่ง:
+deploy ผ่าน clasp แล้ว:
 
 ```powershell
 cd backend
 clasp deploy --description "v1"
 ```
 
-จากนั้นนำ URL มาตั้งค่าใน frontend:
+**จำเป็นต้องอนุญาตสคริปต์ 1 ครั้ง** (deploy ผ่าน clasp/API จะข้ามขั้นตอนนี้ ทำให้เว็บตอบ 403 "ต้องมีสิทธิ์เข้าถึง"):
+
+1. เปิด **Web App URL** ด้วยเบราว์เซอร์ที่ล็อกอินบัญชีเจ้าของ (smartzzz2851@gmail.com)
+2. จะเจอหน้าขอสิทธิ์ → เลือกบัญชี → **Advanced** → **Go to project (unsafe)** → **Allow**
+3. เสร็จแล้วหน้าเว็บจะแสดง JSON ของ `ping` — แปลว่าใช้ได้แล้ว
+
+ตั้งค่า Web App URL ใน frontend (ถ้า deployment URL เปลี่ยน):
 
 ```powershell
 .\scripts\set-api-url.ps1 -Url "https://script.google.com/macros/s/XXXX/exec"
@@ -162,18 +161,32 @@ gh api -X POST repos/{owner}/sheet-drive-app/pages `
 
 | Action | Method | Body / Query | ผลลัพธ์ |
 |---|---|---|---|
-| `ping` | GET | `?action=ping` | `{ ok, time }` |
-| `list` | GET | `?action=list` | รายการrecords ทั้งหมด |
-| `create` | POST | `{ action:'create', payload:{ name, note, fileName, fileUrl } }` | record ที่สร้าง |
+| `ping` | GET | `?action=ping` | `{ ok, time, spreadsheetId, sheetName, headers, rowCount }` (สร้าง header ให้อัตโนมัติ) |
+| `list` | GET | `?action=list` (option `&limit=100`) | รายการเงินเข้าล่าสุด (ใหม่สุดก่อน) |
+| `create` | POST | `{ action:'create', payload:{ amount, customer, bank, ref, note, fileName, fileUrl } }` | record ที่สร้าง |
 | `upload` | POST | `{ action:'upload', payload:{ filename, mimeType, base64 } }` | ข้อมูลไฟล์บน Drive |
 
 หมายเหตุ: frontend ส่ง POST ด้วย `Content-Type: text/plain` เพื่อเลี่ยง CORS preflight
 เพราะ Apps Script ไม่รองรับ request method `OPTIONS`
 
+## วิธีทำงานของ "อ่านเสียงยอดเงินเข้า"
+
+1. เปิดหน้า `index.html` (แท็บ "ตรวจสลิป") ทิ้งไว้ที่เคาน์เตอร์
+2. มีรายการใหม่เข้ามา (เพิ่มผ่านหน้า "เพิ่มเงินเข้า" หรือพิมพ์ใน Google Sheet ตรง ๆ)
+3. ระบบ poll ทุก 15 วินาที → เจอรายการใหม่ → เสียงกริ่ง "ding-dong" + พูด
+   *"เงินเข้า 150 บาท จาก คุณกิตติศักดิ์"* พร้อม toast แจ้งเตือน
+
 ## โครงสร้างข้อมูลใน Sheets
 
-ชีต `Records` มีคอลัมน์:
-`id | name | note | fileName | fileUrl | createdAt`
+ชีตแรกของสเปรดชีตที่ผูกกับสคริปต์ (header สร้างให้อัตโนมัติ):
+`id | ref | customer | bank | amount | note | fileName | fileUrl | createdAt`
+
+- `id` — timestamp ใช้ตรวจจับรายการใหม่
+- `ref` — รหัสอ้างอิงบนสลิป
+- `customer` / `bank` — ชื่อลูกค้า / ธนาคาร
+- `amount` — ยอดเงิน
+- `fileName` / `fileUrl` — ไฟล์สลิปบน Google Drive
+- `createdAt` — เวลาที่บันทึก
 
 ## การตั้งค่าขั้นสูง
 
@@ -189,6 +202,8 @@ gh api -X POST repos/{owner}/sheet-drive-app/pages `
 
 - **`clasp login --status` ขึ้นว่า not logged in** → รัน `.\scripts\login.ps1` ใหม่
 - **หน้าเว็บขึ้น `ยังไม่ได้ตั้งค่า API_URL`** → รัน `set-api-url.ps1` แล้ว push ใหม่
-- **401/403 จาก Apps Script** → ตรวจว่า Deploy เป็น "Anyone" และ Execute as "Me"
+- **เรียก API ได้ 403 "ต้องมีสิทธิ์เข้าถึง" (You need access)** → สคริปต์ยังไม่ได้รับอนุญาต
+  ให้เปิด Web App URL ด้วยเบราว์เซอร์ที่ล็อกอินบัญชีเจ้าของ → Advanced → Go to project → Allow (1 ครั้งพอ)
+- **ไม่มีเสียงพูด** → เบราว์เซอร์ (โดยเฉพาะ iOS) ต้องแตะหน้าจอก่อน 1 ครั้งเพื่อปลดล็อกเสียง
 - **ไฟล์เปิดจากลิงก์ไม่ได้** → organization อาจห้ามแชร์สาธารณะ ให้แชร์โฟลเดอร์ `App Uploads` เอง
 - **`npm` ใช้ไม่ได้ใน PowerShell** → ตั้ง execution policy: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`

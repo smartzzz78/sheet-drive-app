@@ -1,14 +1,15 @@
 /**
- * Entry point ของ Web App
+ * Entry point ของ Web App — แอปอ่านเสียงยอดเงินเข้า (Money In Voice)
+ *
+ * ฐานข้อมูล: Google Sheet ที่ผูกกับสคริปต์นี้อยู่แล้ว (ไม่สร้างใหม่)
+ *            header จะถูกสร้างให้อัตโนมัติในชีตแรกของไฟล์
+ * ไฟล์แนบ:   Google Drive (โฟลเดอร์ "App Uploads")
  *
  * รองรับ action:
- *   GET  ?action=ping
- *   GET  ?action=list
- *   POST { action: 'create', payload: {...} }
- *   POST { action: 'upload', payload: {...} }
- *
- * ครั้งแรกให้รัน setupDatabase() ใน Apps Script editor 1 ครั้ง
- * เพื่อสร้าง Spreadsheet + โฟลเดอร์ Drive และเก็บ ID ลง Script Properties
+ *   GET  ?action=ping                              -> ตรวจสอบระบบ + ข้อมูลชีต
+ *   GET  ?action=list[&limit=100]                  -> รายการเงินเข้าล่าสุด
+ *   POST { action: 'create', payload: {...} }      -> บันทึกรายการเงินเข้า
+ *   POST { action: 'upload', payload: {...} }      -> อัปโหลดรูปสลิปขึ้น Drive
  */
 
 function doGet(e) {
@@ -34,10 +35,10 @@ function handleRequest_(e, method) {
 
     switch (action) {
       case 'ping':
-        data = { ok: true, time: new Date().toISOString() };
+        data = ping_();
         break;
       case 'list':
-        data = listRecords_();
+        data = listRecords_(params.limit);
         break;
       case 'create':
         data = createRecord_(payload);
@@ -62,64 +63,67 @@ function jsonResponse_(obj) {
 }
 
 /**
- * ตั้งค่าฐานข้อมูลครั้งแรก:
- * - สร้าง Google Spreadsheet (ถ้ายังไม่มี)
- * - สร้างโฟลเดอร์ Google Drive สำหรับเก็บไฟล์ (ถ้ายังไม่มี)
- * - เก็บ ID ไว้ใน Script Properties
- *
- * วิธีรัน: เลือกฟังก์ชัน setupDatabase แล้วกด Run ใน Apps Script editor
+ * ตรวจสอบระบบ — เรียกครั้งแรกเพื่อให้ header ถูกสร้างในชีตทันที
  */
-function setupDatabase() {
-  var props = PropertiesService.getScriptProperties();
-
-  var spreadsheetId = props.getProperty('SPREADSHEET_ID');
-  if (!spreadsheetId) {
-    var ss = SpreadsheetApp.create('App Database');
-    spreadsheetId = ss.getId();
-    props.setProperty('SPREADSHEET_ID', spreadsheetId);
-  }
-
-  if (!props.getProperty('SHEET_NAME')) {
-    props.setProperty('SHEET_NAME', 'Records');
-  }
-
+function ping_() {
   var sheet = getSheet_();
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(HEADERS);
-  }
-
+  var config = getConfig_();
   var folder = getDriveFolder_();
 
-  var result = {
-    spreadsheetId: spreadsheetId,
-    spreadsheetUrl: SpreadsheetApp.openById(spreadsheetId).getUrl(),
-    folderId: folder.getId(),
-    folderUrl: folder.getUrl()
+  return {
+    ok: true,
+    time: new Date().toISOString(),
+    spreadsheetId: config.spreadsheetId,
+    spreadsheetUrl: config.spreadsheetUrl,
+    sheetName: sheet.getName(),
+    headers: getHeaders_(),
+    rowCount: Math.max(sheet.getLastRow() - 1, 0),
+    driveFolderId: folder.getId()
   };
+}
 
+/**
+ * แสดงค่าที่ตั้งไว้ใน Script Properties (รันได้จาก editor เพื่อตรวจสอบ)
+ */
+function showConfig() {
+  var result = ping_();
   Logger.log(JSON.stringify(result, null, 2));
   return result;
 }
 
 /**
- * แสดงค่าที่ตั้งไว้ใน Script Properties
+ * ตั้งค่าฐานข้อมูลเอง (สำหรับรันจาก Apps Script editor)
+ * - ใช้สเปรดชีตที่ผูกกับสคริปต์อยู่แล้ว / หรือตาม SPREADSHEET_ID ใน Script Properties
+ * - สร้าง header ในชีตทันที
+ * - หาโฟลเดอร์ Drive "App Uploads" ถ้าไม่มีค่อยสร้าง
  */
-function showConfig() {
-  var props = PropertiesService.getScriptProperties();
-  var result = {
-    SPREADSHEET_ID: props.getProperty('SPREADSHEET_ID') || '',
-    SHEET_NAME: props.getProperty('SHEET_NAME') || '',
-    DRIVE_FOLDER_ID: props.getProperty('DRIVE_FOLDER_ID') || ''
-  };
+function setupDatabase() {
+  var result = ping_();
   Logger.log(JSON.stringify(result, null, 2));
   return result;
 }
 
 function getConfig_() {
   var props = PropertiesService.getScriptProperties();
+  var spreadsheetId = props.getProperty('SPREADSHEET_ID') || '';
+  var ss = null;
+
+  if (spreadsheetId) {
+    ss = SpreadsheetApp.openById(spreadsheetId);
+  } else {
+    // สคริปต์นี้ผูกกับ Google Sheet อยู่แล้ว -> ใช้ไฟล์นั้น ไม่สร้างใหม่
+    ss = SpreadsheetApp.getActiveSpreadsheet();
+  }
+
+  if (!ss) {
+    throw new Error(
+      'ไม่พบสเปรดชีต: ใช้สคริปต์ที่ผูกกับ Google Sheet หรือตั้ง SPREADSHEET_ID ใน Script Properties'
+    );
+  }
+
   return {
-    spreadsheetId: props.getProperty('SPREADSHEET_ID') || '',
-    sheetName: props.getProperty('SHEET_NAME') || 'Records',
-    driveFolderId: props.getProperty('DRIVE_FOLDER_ID') || ''
+    spreadsheetId: ss.getId(),
+    spreadsheetUrl: ss.getUrl(),
+    sheetName: props.getProperty('SHEET_NAME') || ''
   };
 }

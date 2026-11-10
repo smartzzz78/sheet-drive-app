@@ -1,20 +1,34 @@
 /**
- * จัดการไฟล์บน Google Drive
+ * จัดการไฟล์บน Google Drive (รูปสลิปเงินเข้า)
+ *
+ * ใช้โฟลเดอร์ "App Uploads" ที่มีอยู่แล้วถ้าเจอ ถ้าไม่มีค่อยสร้างใหม่
  */
+
+var DRIVE_FOLDER_NAME = 'App Uploads';
 
 function getDriveFolder_() {
   var props = PropertiesService.getScriptProperties();
   var folderId = props.getProperty('DRIVE_FOLDER_ID');
 
+  // 1) ตาม ID ที่เคยบันทึกไว้ใน Script Properties
   if (folderId) {
     try {
       return DriveApp.getFolderById(folderId);
     } catch (err) {
-      // โฟลเดอร์อาจถูกลบไปแล้ว -> สร้างใหม่ด้านล่าง
+      // โฟลเดอร์อาจถูกลบไปแล้ว -> หาต่อด้านล่าง
     }
   }
 
-  var folder = DriveApp.createFolder('App Uploads');
+  // 2) หาโฟลเดอร์ชื่อเดิมที่มีอยู่แล้ว (ใช้ของเดิม ไม่สร้างซ้ำ)
+  var it = DriveApp.getFoldersByName(DRIVE_FOLDER_NAME);
+  if (it.hasNext()) {
+    var existing = it.next();
+    props.setProperty('DRIVE_FOLDER_ID', existing.getId());
+    return existing;
+  }
+
+  // 3) ไม่เคยมีเลย -> สร้างครั้งเดียว
+  var folder = DriveApp.createFolder(DRIVE_FOLDER_NAME);
   props.setProperty('DRIVE_FOLDER_ID', folder.getId());
   return folder;
 }

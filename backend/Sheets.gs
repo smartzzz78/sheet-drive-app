@@ -1,36 +1,71 @@
 /**
- * จัดการฐานข้อมูลด้วย Google Sheets
+ * จัดการฐานข้อมูลด้วย Google Sheets (รายการเงินเข้า)
+ *
+ * ใช้ชีตที่ผู้กับสคริปต์อยู่แล้ว — ไม่สร้างสเปรดชีต/ชีตใหม่
+ * ถ้ายังไม่มี header จะเขียนให้อัตโนมัติในแถวแรกของชีต
  */
 
-var HEADERS = ['id', 'name', 'note', 'fileName', 'fileUrl', 'createdAt'];
+var HEADERS = ['id', 'ref', 'customer', 'bank', 'amount', 'note', 'fileName', 'fileUrl', 'createdAt'];
+
+function getHeaders_() {
+  return HEADERS.slice();
+}
 
 function getSpreadsheet_() {
   var config = getConfig_();
-  if (!config.spreadsheetId) {
-    throw new Error('ยังไม่ได้ตั้งค่าฐานข้อมูล กรุณารัน setupDatabase() ก่อน');
+  if (config.spreadsheetId) {
+    return SpreadsheetApp.openById(config.spreadsheetId);
   }
-  return SpreadsheetApp.openById(config.spreadsheetId);
+  throw new Error('ไม่พบสเปรดชีต กรุณารัน setupDatabase() ก่อน');
 }
 
+/**
+ * เอาชีตที่จะใช้เก็บข้อมูล:
+ * 1) ชื่อจาก Script Properties SHEET_NAME ถ้าตั้งไว้
+ * 2) ไม่งั้นใช้ชีตแรกของสเปรดชีตที่ผูกกับสคริปต์
+ */
 function getSheet_() {
   var config = getConfig_();
-  var ss = getSpreadsheet_();
-  var sheet = ss.getSheetByName(config.sheetName);
+  var ss = SpreadsheetApp.openById(config.spreadsheetId);
+  var sheet = null;
+
+  if (config.sheetName) {
+    sheet = ss.getSheetByName(config.sheetName);
+    if (!sheet) {
+      // ถ้าระบุชื่อไว้แต่ไม่มีชีตนั้น ให้กลับไปใช้ชีตแรก ไม่สร้างชีตใหม่
+      sheet = null;
+    }
+  }
 
   if (!sheet) {
-    sheet = ss.insertSheet(config.sheetName);
+    sheet = ss.getSheets()[0];
   }
 
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(HEADERS);
-    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
-    sheet.setFrozenRows(1);
-  }
-
+  ensureHeaders_(sheet);
   return sheet;
 }
 
-function listRecords_() {
+/**
+ * สร้าง header database ในชีตที่ส่งให้ (ถ้ายังไม่มี)
+ * เขียนเฉพาะเมื่อแถวแรกว่างเท่านั้น เพื่อไม่ทับข้อมูลเดิม
+ */
+function ensureHeaders_(sheet) {
+  var firstCell = sheet.getRange(1, 1).getValue();
+  if (String(firstCell).trim() !== '') {
+    return; // มีข้อมูล/header อยู่แล้ว ไม่แตะ
+  }
+
+  sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+  sheet.setFrozenRows(1);
+}
+
+function listRecords_(limitParam) {
+  var limit = parseInt(limitParam, 10);
+  if (!limit || limit < 1 || limit > 500) {
+    limit = 100;
+  }
+
   var sheet = getSheet_();
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return [];
@@ -40,43 +75,53 @@ function listRecords_() {
 
   for (var i = 0; i < values.length; i++) {
     var row = values[i];
-    if (!row[0]) continue;
+    if (String(row[0]).trim() === '') continue;
 
     records.push({
       id: String(row[0]),
-      name: String(row[1] || ''),
-      note: String(row[2] || ''),
-      fileName: String(row[3] || ''),
-      fileUrl: String(row[4] || ''),
-      createdAt: row[5] instanceof Date ? row[5].toISOString() : String(row[5] || '')
+      ref: String(row[1] || ''),
+      customer: String(row[2] || ''),
+      bank: String(row[3] || ''),
+      amount: Number(row[4]) || 0,
+      note: String(row[5] || ''),
+      fileName: String(row[6] || ''),
+      fileUrl: String(row[7] || ''),
+      createdAt: row[8] instanceof Date ? row[8].toISOString() : String(row[8] || '')
     });
   }
 
-  // แสดงรายการล่าสุดก่อน
-  return records.reverse();
+  // ใหม่สุดก่อน (แถวล่าง = ล่าสุด) และจำกัดจำนวน
+  return records.reverse().slice(0, limit);
 }
 
 function createRecord_(payload) {
   payload = payload || {};
 
-  var name = String(payload.name || '').trim();
-  if (!name) {
-    throw new Error('กรุณาระบุชื่อ');
+  var amount = Number(payload.amount);
+  if (!amount || amount <= 0) {
+    throw new Error('กรุณาระบุยอดเงิน (มากกว่า 0)');
   }
 
-  var sheet = getSheet_();
+  var customer = String(payload.customer || '').trim();
   var record = {
-    id: Utilities.getUuid(),
-    name: name,
+    id: String(Date.now()),
+    ref: String(payload.ref || '').trim(),
+    customer: customer,
+    bank: String(payload.bank || '').trim(),
+    amount: amount,
     note: String(payload.note || ''),
     fileName: String(payload.fileName || ''),
     fileUrl: String(payload.fileUrl || ''),
     createdAt: new Date()
   };
 
+  var sheet = getSheet_();
   sheet.appendRow([
     record.id,
-    record.name,
+    record.ref,
+    record.customer,
+    record.bank,
+    record.amount,
     record.note,
     record.fileName,
     record.fileUrl,
