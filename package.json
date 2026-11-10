@@ -8,7 +8,7 @@
     "gas:login": "clasp login",
     "gas:create": "cd backend && clasp create --type webapp --title \"Sheet Drive App\"",
     "gas:push": "cd backend && clasp push",
-    "gas:deploy": "cd backend && clasp deploy --description \"deploy $(date)\"",
+    "gas:deploy": "cd backend && clasp deploy --description \"deploy\"",
     "gas:open": "cd backend && clasp open",
     "gas:logs": "cd backend && clasp logs"
   }

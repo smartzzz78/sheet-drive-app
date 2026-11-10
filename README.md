@@ -53,19 +53,15 @@
 
 ```powershell
 gh auth status
-clasp login --status
+clasp show-authorized-user
 ```
 
-## ขั้นตอนที่ 2 — สร้างโปรเจกต์ Apps Script
+## ขั้นตอนที่ 2 — เปิดโปรเจกต์ Apps Script
 
-```powershell
-cd backend
-clasp create --type webapp --title "Sheet Drive App"
-```
+> โปรเจกต์ Apps Script ถูกสร้างไว้แล้ว (ดู `backend/.clasp.json`)
+> ถ้าต้องสร้างใหม่บนเครื่องอื่น ให้รัน `npm run gas:create`
 
-จะได้ไฟล์ `backend/.clasp.json` (เก็บ scriptId) พร้อมลิงก์เปิดหน้า editor
-
-จากนั้นเปิดโปรเจกต์:
+เปิดโปรเจกต์:
 
 ```powershell
 clasp open

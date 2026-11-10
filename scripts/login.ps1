@@ -1,4 +1,4 @@
-# เปิดหน้าต่าง login สำหรับ GitHub CLI และ clasp
+﻿# เปิดหน้าต่าง login สำหรับ GitHub CLI และ clasp
 # รันสคริปต์นี้ใน PowerShell แล้วทำตามขั้นตอนในหน้าต่างที่เปิดขึ้น
 
 Write-Host "1) กำลังเปิด GitHub CLI login..." -ForegroundColor Cyan

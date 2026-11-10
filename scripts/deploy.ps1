@@ -1,4 +1,4 @@
-# push โค้ดทั้ง 2 ฝั่ง: GitHub Pages (frontend) + Apps Script (backend)
+﻿# push โค้ดทั้ง 2 ฝั่ง: GitHub Pages (frontend) + Apps Script (backend)
 # ใช้งาน: .\scripts\deploy.ps1 -Message "อัปเดตฟีเจอร์..."
 
 param(
