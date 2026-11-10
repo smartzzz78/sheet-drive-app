@@ -14,6 +14,25 @@
 
   var currentAudio = null;
 
+  // Cache เสียงที่สร้างแล้ว (ข้อความ+เสียงเดิม = ใช้เสียงเดิมซ้ำ ไม่ยิง API ซ้ำ / ประหยัดโควต้า)
+  var audioCache = {};
+  var audioCacheOrder = [];
+  var AUDIO_CACHE_LIMIT = 20;
+
+  function cacheKey(text, voice) {
+    return text + '|' + (voice || '');
+  }
+
+  function cachePut(key, url) {
+    if (audioCacheOrder.length >= AUDIO_CACHE_LIMIT) {
+      var oldest = audioCacheOrder.shift();
+      try { URL.revokeObjectURL(audioCache[oldest]); } catch (e) { /* ไม่เป็นไร */ }
+      delete audioCache[oldest];
+    }
+    if (!audioCache[key]) audioCacheOrder.push(key);
+    audioCache[key] = url;
+  }
+
   function base64ToBytes(b64) {
     var bin = atob(b64);
     var bytes = new Uint8Array(bin.length);
@@ -47,13 +66,21 @@
   }
 
   function buildAudioUrl(data) {
-    var mime = String(data.mimeType || '');
     var bytes = base64ToBytes(data.audioBase64);
 
-    if (/wav/i.test(mime)) {
+    // ตัดสินใจจาก magic bytes จริง ไม่เชื่อ mimeType เพียงอย่างเดียว
+    // (พบจริงว่าบางช่องทางส่ง PCM ดิบมาพร้อม mime audio/wav)
+    var isWav = bytes.length > 44 &&
+      bytes[0] === 0x52 && bytes[1] === 0x49 && // 'RI'
+      bytes[2] === 0x46 && bytes[3] === 0x46 && // 'FF'
+      bytes[8] === 0x57 && bytes[9] === 0x41;   // 'WA' (WAVE)
+
+    if (isWav) {
       return URL.createObjectURL(new Blob([bytes], { type: 'audio/wav' }));
     }
-    // audio/L16;rate=24000 (PCM ดิบ)
+
+    // PCM ดิบ: อ่าน sample rate จาก mime เช่น audio/L16;rate=24000
+    var mime = String(data.mimeType || '');
     var m = mime.match(/rate=(\d+)/);
     var rate = m ? parseInt(m[1], 10) : 24000;
     return URL.createObjectURL(new Blob([pcmToWavBytes(bytes, rate)], { type: 'audio/wav' }));
@@ -64,10 +91,10 @@
       var a = currentAudio;
       currentAudio = null;
       try { a.pause(); } catch (e) { /* ไม่เป็นไร */ }
-      try { URL.revokeObjectURL(a.src); } catch (e) { /* ไม่เป็นไร */ }
+      // ไม่ revoke URL — เก็บไว้ใช้ซ้ำผ่าน cache (revoke ตอนถูกไล่ออกจาก cache เท่านั้น)
       // ปลดล็อก promise ที่รอฟังอยู่ (ถ้ามี) ให้จบไป
       if (a.__whenDone) {
-        try { a.__whenDone(); } catch (e) { /* ไม่เป็นไร */ }
+        try { a.__whenDone('ok'); } catch (e) { /* ไม่เป็นไร */ }
       }
     }
   }
@@ -105,22 +132,45 @@
       if (opts && opts.voice) payload.voice = opts.voice;
       if (opts && opts.model) payload.model = opts.model;
 
-      var data = await window.Api.request('speak', payload);
-      var url = buildAudioUrl(data);
+      // มีใน cache แล้วใช้เลย (ไม่ยิง API ซ้ำ)
+      var key = cacheKey(text, opts && opts.voice);
+      var url = audioCache[key];
+      var wasCached = !!url;
+      if (!url) {
+        var data = await window.Api.request('speak', payload);
+        url = buildAudioUrl(data);
+        cachePut(key, url);
+      }
 
       stopCurrent();
       currentAudio = new Audio(url);
+      var audio = currentAudio;
+      var playedAtLeastSome = false;
       var whenDone = new Promise(function (resolve) {
-        currentAudio.__whenDone = resolve;
-        currentAudio.onended = function () {
-          try { URL.revokeObjectURL(url); } catch (e) { /* ไม่เป็นไร */ }
-          resolve();
+        audio.__whenDone = resolve;
+        audio.onended = function () {
+          resolve('ok');
         };
-        currentAudio.onerror = resolve;
+        audio.onerror = function () {
+          // ถ้ายังไม่ทันได้ยินอะไรเลย = เสียงเล่นไม่ได้ (decode fail)
+          resolve(playedAtLeastSome ? 'ok' : 'play-error');
+        };
+        audio.ontimeupdate = function () {
+          if (audio.currentTime > 0) playedAtLeastSome = true;
+        };
       });
 
       await currentAudio.play();
-      await whenDone; // รอให้เล่นจบจริง (หรือถูกเสียงใหม่แทนที่)
+      var outcome = await whenDone; // รอให้เล่นจบจริง (หรือถูกเสียงใหม่แทนที่)
+      if (outcome === 'play-error') {
+        if (wasCached) {
+          // เสียง cache นี้เสีย — ลบทิ้งกันใช้ซ้ำครั้งหลัง
+          var idx = audioCacheOrder.indexOf(key);
+          if (idx !== -1) audioCacheOrder.splice(idx, 1);
+          delete audioCache[key];
+        }
+        throw new Error('เสียง AI เล่นไม่ได้ (ไฟล์เสียงผิด format)');
+      }
       return 'ai';
     } catch (err) {
       var msg = err && err.message ? err.message : String(err);

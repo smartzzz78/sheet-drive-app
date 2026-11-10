@@ -478,6 +478,12 @@
       waveBars.classList.add('wave-active');
     }
 
+    // เสียง AI ก่อน (Gemini TTS ผ่าน backend — มี fallback เป็นเสียงระบบในตัว)
+    if (window.AiVoice && window.AiVoice.speak) {
+      window.AiVoice.speak(text);
+      return;
+    }
+
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const msg = new SpeechSynthesisUtterance(text);
@@ -702,5 +708,6 @@
   }, { once: true });
 </script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)]" data-active-classes="text-primary font-bold"><div class="grid grid-cols-5 items-center h-16 px-1"><a aria-current="page" class="flex flex-col items-center justify-center h-12 gap-0.5 transition-colors text-primary font-bold" data-path="dashboard" href="dashboard.html"><span class="material-symbols-outlined text-[22px]">insights</span><span class="font-label-sm text-label-sm text-center">ภาพรวม</span></a><a class="flex flex-col items-center justify-center h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="slip-verify" href="index.html"><span class="material-symbols-outlined text-[22px]">verified_user</span><span class="font-label-sm text-label-sm text-center">ตรวจสลิป</span></a><a class="flex flex-col items-center justify-center h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="counter-live" href="counter-live.html"><span class="material-symbols-outlined text-[22px]">point_of_sale</span><span class="font-label-sm text-label-sm text-center">เคาน์เตอร์</span></a><a class="flex flex-col items-center justify-center h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="settings-shift" href="settings-shift.html"><span class="material-symbols-outlined text-[22px]">tune</span><span class="font-label-sm text-label-sm text-center">ตั้งค่า &amp; กะ</span></a><a class="flex flex-col items-center justify-center h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="money-in" href="money-in.html"><span class="material-symbols-outlined text-[22px]">add_circle</span><span class="font-label-sm text-label-sm text-center">เพิ่มเงินเข้า</span></a></div></nav><script src="js/config.js"></script>
 <script src="js/api.js"></script>
+<script src="js/ai-voice.js"></script>
 </body></html>
 

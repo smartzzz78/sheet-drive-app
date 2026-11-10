@@ -528,6 +528,15 @@
     }
   }
 
+  // พูดด้วยเสียง AI (Gemini TTS) — ถ้าโมดูลยังไม่โหลด/ใช้ไม่ได้ ใช้เสียงระบบเดิม
+  function aiSpeak(text) {
+    if (window.AiVoice && window.AiVoice.speak) {
+      window.AiVoice.speak(text); // ภายในมี fallback เป็นเสียงระบบให้เอง
+    } else {
+      speakThai(text);
+    }
+  }
+
   // Toast Helper
   let toastTimer = null;
   function showToast(title, message, isError = false) {
@@ -579,7 +588,7 @@
     document.getElementById('voiceStatusText').classList.remove('text-on-error');
 
     setTimeout(() => {
-      speakThai('ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์');
+      aiSpeak('ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์');
     }, 280);
 
     showToast('ทดสอบระบบเสียงสลิปแท้', 'ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์', false);
@@ -613,7 +622,7 @@
       // Harmonic Ding-Dong + ขานยอดเงิน
       playHarmonicDingDong();
       setTimeout(() => {
-        speakThai('ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์');
+        aiSpeak('ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์');
       }, 300);
 
       showToast('ตรวจสอบสลิปสำเร็จ 100%', 'เงินเข้า 150 บาท จาก คุณกิตติศักดิ์ ร. (K PLUS)', false);
@@ -679,7 +688,7 @@
 
     // พูดเตือนสลิปปลอม
     setTimeout(() => {
-      speakThai('คำเตือน สลิปนี้ถูกใช้ไปแล้ว ระวังมิจฉาชีพ');
+      aiSpeak('คำเตือน สลิปนี้ถูกใช้ไปแล้ว ระวังมิจฉาชีพ');
     }, 450);
 
     showToast('คำเตือนตรวจพบสลิปวนซ้ำ!', 'รหัสสลิปนี้เคยใช้ชำระเงินแล้ว ระวังมิจฉาชีพ', true);
@@ -723,7 +732,7 @@
     getAudioContext();
     playHarmonicDingDong();
     setTimeout(() => {
-      speakThai(`ตรวจสลิปแท้ 100% เงินเข้า ${currentModalData.amount} บาท จาก ${currentModalData.customer}`);
+      aiSpeak(`ตรวจสลิปแท้ 100% เงินเข้า ${currentModalData.amount} บาท จาก ${currentModalData.customer}`);
     }, 280);
   }
 
@@ -758,7 +767,7 @@
     getAudioContext();
     playHarmonicDingDong();
     setTimeout(() => {
-      speakThai('ระบบพร้อมเพย์และเครื่องตรวจสลิปพร้อมใช้งานค่ะ');
+      aiSpeak('ระบบพร้อมเพย์และเครื่องตรวจสลิปพร้อมใช้งานค่ะ');
     }, 260);
     showToast('ทดสอบระบบเสียง', 'ระบบตรวจสลิปแท้ 100% ออนไลน์และพร้อมเปล่งเสียง', false);
   };
