@@ -210,7 +210,7 @@
 <span class="">เลือกคาแรคเตอร์เสียง AI (Voice Personas)</span>
 <span class="text-primary font-normal text-label-sm">4 คาแรคเตอร์พร้อมใช้งาน</span>
 </span>
-<div class="bg-surface-container-low border border-primary/20 rounded-xl p-3 flex flex-col gap-2.5 mb-2"><div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[20px]">vpn_key</span><span class="font-label-sm text-label-sm font-semibold text-on-surface">AI Voice API Key (ElevenLabs / Gemini)</span></div><span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-[11px] font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span> ยังไม่ได้ตั้งค่า</span></div><div class="flex items-center gap-2 bg-surface rounded-lg p-2 border border-outline-variant/30"><input id="ai-api-key-input" type="password" readonly="" value="" class="w-full bg-transparent font-mono text-label-sm text-on-surface border-0 outline-none select-all"><button type="button" onclick="toggleApiKeyVisibility()" class="px-2 py-1 rounded bg-surface-container text-on-surface-variant hover:text-primary flex items-center gap-1 text-[11px] font-medium transition-colors" title="แสดง/ซ่อนคีย์"><span class="material-symbols-outlined text-[16px]" id="api-key-eye-icon">visibility</span><span id="api-key-visibility-label" class="">แสดง</span></button><button type="button" onclick="copyApiKey()" class="px-2.5 py-1 rounded bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-1 text-[11px] font-semibold transition-colors"><span class="material-symbols-outlined text-[16px]">content_copy</span><span class="">คัดลอก</span></button></div><div class="flex items-center justify-between text-on-surface-variant font-label-sm text-[11px]"><span class="font-mono text-primary font-semibold">Key: ยังไม่ได้ตั้งค่าคีย์ AI Voice</span><span class="">โควต้าคงเหลือ: ไม่จำกัด (Cloud Live)</span></div></div><div class="grid grid-cols-1 gap-2" id="voice-persona-list">
+<div class="bg-surface-container-low border border-primary/20 rounded-xl p-3 flex flex-col gap-2.5 mb-2"><div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[20px]">vpn_key</span><span class="font-label-sm text-label-sm font-semibold text-on-surface">AI Voice API Key (Gemini)</span></div><span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-[11px] font-bold flex items-center gap-1" id="ai-key-status-badge"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span> <span id="ai-key-status-text">ยังไม่ได้ตั้งค่า</span></span></div><div class="flex items-center gap-2 bg-surface rounded-lg p-2 border border-outline-variant/30"><input id="ai-api-key-input" type="password" value="" autocomplete="off" spellcheck="false" placeholder="วางคีย์ Gemini API แล้วกดบันทึก (เก็บบนเซิร์ฟเวอร์)" class="w-full bg-transparent font-mono text-label-sm text-on-surface border-0 outline-none"><button type="button" onclick="toggleApiKeyVisibility()" class="px-2 py-1 rounded bg-surface-container text-on-surface-variant hover:text-primary flex items-center gap-1 text-[11px] font-medium transition-colors" title="แสดง/ซ่อนคีย์"><span class="material-symbols-outlined text-[16px]" id="api-key-eye-icon">visibility</span><span id="api-key-visibility-label" class="">แสดง</span></button><button type="button" onclick="saveAiApiKey()" id="btn-save-ai-key" class="px-2.5 py-1 rounded bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-1 text-[11px] font-semibold transition-colors"><span class="material-symbols-outlined text-[16px]">save</span><span class="">บันทึกคีย์</span></button></div><div class="flex items-center justify-between text-on-surface-variant font-label-sm text-[11px]"><span class="font-mono text-primary font-semibold" id="ai-key-summary">Key: ยังไม่ได้ตั้งค่าคีย์ AI Voice</span><span class="" id="ai-model-text">โมเดล: gemini-3.8-flash-tts</span></div></div><div class="grid grid-cols-1 gap-2" id="voice-persona-list">
 <!-- Voice 1: Mali (Active/Recommended) -->
 <div class="p-3 rounded-xl border-2 border-primary bg-primary/5 flex items-center justify-between transition-all cursor-pointer persona-item" id="persona-card-mali" onclick="selectVoicePersona('mali')">
 <div class="flex items-center gap-3">
@@ -238,7 +238,7 @@
 <div class="flex flex-col text-left">
 <div class="flex items-center gap-1.5">
 <span class="font-label-lg text-label-lg font-bold text-on-surface">น้องใบเฟิร์น (Baifern)</span>
-<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-secondary font-label-sm text-[10px]" id="tag-baifern">ElevenLabs Multilingual</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-secondary font-label-sm text-[10px]" id="tag-baifern">Gemini • Aoede</span>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant">สาวหวาน นุ่มนวล สุภาพ น่ารัก สไตล์คาเฟ่สโลว์บาร์</span>
 </div>
@@ -256,7 +256,7 @@
 <div class="flex flex-col text-left">
 <div class="flex items-center gap-1.5">
 <span class="font-label-lg text-label-lg font-bold text-on-surface">พี่กานต์ (Karn)</span>
-<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-[10px]" id="tag-karn">Deep Neural Voice</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-[10px]" id="tag-karn">Gemini • Orus</span>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant">ชายหนุ่ม นุ่ม ลุ่มลึก น่าเชื่อถือ เป็นมิตร สุภาพทางการ</span>
 </div>
@@ -274,7 +274,7 @@
 <div class="flex flex-col text-left">
 <div class="flex items-center gap-1.5">
 <span class="font-label-lg text-label-lg font-bold text-on-surface">น้องมีนา (Meena)</span>
-<span class="px-1.5 py-0.2 rounded bg-tertiary/10 text-tertiary font-label-sm text-[10px]" id="tag-meena">Ultra Expressive</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary/10 text-tertiary font-label-sm text-[10px]" id="tag-meena">Gemini • Leda</span>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant">กระตือรือร้น มีพลัง สดใส รวดเร็ว สไตล์วัยรุ่นพลังบวก</span>
 </div>
@@ -470,6 +470,7 @@
     mali: {
       name: 'น้องมะลิ (Mali)',
       tagLabel: 'ใช้งานอยู่ • แนะนำ',
+      geminiVoice: 'Kore',
       pitch: 1.25,
       rateMultiplier: 1.02,
       scriptText: 'เงินเข้าแล้วค่ะ 150 บาท ผ่านพร้อมเพย์ ยินดีให้บริการนะคะ',
@@ -478,7 +479,8 @@
     },
     baifern: {
       name: 'น้องใบเฟิร์น (Baifern)',
-      tagLabel: 'ElevenLabs Multilingual',
+      tagLabel: 'Gemini • Aoede',
+      geminiVoice: 'Aoede',
       pitch: 1.12,
       rateMultiplier: 0.95,
       scriptText: 'ยอดโอนเข้าแล้วค่ะ 150 บาท ขอให้มีความสุขกับกาแฟแก้วโปรดนะคะ',
@@ -487,7 +489,8 @@
     },
     karn: {
       name: 'พี่กานต์ (Karn)',
-      tagLabel: 'Deep Neural Voice',
+      tagLabel: 'Gemini • Orus',
+      geminiVoice: 'Orus',
       pitch: 0.82,
       rateMultiplier: 0.94,
       scriptText: 'ได้รับยอดเงินพร้อมเพย์ 150 บาทเรียบร้อย ขอบคุณครับ',
@@ -496,7 +499,8 @@
     },
     meena: {
       name: 'น้องมีนา (Meena)',
-      tagLabel: 'Ultra Expressive',
+      tagLabel: 'Gemini • Leda',
+      geminiVoice: 'Leda',
       pitch: 1.35,
       rateMultiplier: 1.15,
       scriptText: 'เงินเข้า 150 บาท จัดกาแฟสดชื่นให้ทันทีเลยจ้า!',
@@ -603,6 +607,24 @@
   // Real TTS speech synthesis with persona tone & pitch
   function speakSentence(text, personaKey, onFinish) {
     initAudio();
+    const persona = personaProfiles[personaKey] || personaProfiles.mali;
+
+    // เสียง AI (Gemini TTS ผ่าน backend — คีย์อยู่บนเซิร์ฟเวอร์) ตามโหมดเสียงของ persona
+    // ถ้าไม่มีคีย์/ออฟไลน์ AiVoice จะใช้เสียงระบบสำรองให้เอง
+    if (window.AiVoice && window.AiVoice.speak) {
+      setWaveformActive(true);
+      window.AiVoice.speak(text, { voice: persona.geminiVoice })
+        .then(function () {
+          setWaveformActive(false);
+          if (onFinish) onFinish();
+        })
+        .catch(function () {
+          setWaveformActive(false);
+          if (onFinish) onFinish();
+        });
+      return;
+    }
+
     if (!('speechSynthesis' in window)) {
       showToast('เบราว์เซอร์ไม่รองรับ Web Speech API แต่จำลองเสียง Chime สำเร็จ', 'volume_up');
       if (onFinish) onFinish();
@@ -612,7 +634,6 @@
     try {
       window.speechSynthesis.cancel(); // Clear any queued utterances
 
-      const persona = personaProfiles[personaKey] || personaProfiles.mali;
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'th-TH';
 
@@ -669,6 +690,11 @@
     const scriptBox = document.getElementById('live-preview-script');
     if (scriptBox) {
       scriptBox.innerText = `"${persona.scriptText}"`;
+    }
+
+    // บันทึกโหมดเสียงที่เลือกไว้บนเซิร์ฟเวอร์ (ประกาศเงินเข้าทุกหน้าจะใช้เสียงนี้)
+    if (window.Api && persona.geminiVoice) {
+      window.Api.request('setVoiceConfig', { voice: persona.geminiVoice }).catch(function () { /* เงียบไว้ — ไม่กระทบการใช้งาน */ });
     }
 
     showToast(`เลือกเสียง: ${persona.name} เรียบร้อย`, 'record_voice_over');
@@ -770,6 +796,75 @@
     showToast('ทดสอบเสียงผ่าน JBL Flip: ตริ๊ง! เสียงเตือนลำโพงดังชัดเจน', 'volume_up');
   }
 
+  // ---- AI Voice API Key (Gemini) — เก็บบนเซิร์ฟเวอร์ Apps Script ----
+  function toggleApiKeyVisibility() {
+    const input = document.getElementById('ai-api-key-input');
+    const eyeIcon = document.getElementById('api-key-eye-icon');
+    const label = document.getElementById('api-key-visibility-label');
+    if (!input) return;
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    if (eyeIcon) eyeIcon.innerText = show ? 'visibility_off' : 'visibility';
+    if (label) label.innerText = show ? 'ซ่อน' : 'แสดง';
+  }
+
+  function refreshAiVoiceStatus(status) {
+    const badge = document.getElementById('ai-key-status-badge');
+    const text = document.getElementById('ai-key-status-text');
+    const summary = document.getElementById('ai-key-summary');
+    const modelText = document.getElementById('ai-model-text');
+    if (status && status.hasKey) {
+      if (badge) badge.className = 'px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-[11px] font-bold flex items-center gap-1';
+      if (text) text.innerText = 'ตั้งค่าแล้ว • ' + (status.voice || 'Kore');
+      if (summary) summary.innerText = 'Key: ตั้งค่าแล้ว (เก็บบนเซิร์ฟเวอร์ ไม่แสดงคีย์บนหน้าเว็บ)';
+    } else {
+      if (badge) badge.className = 'px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-[11px] font-bold flex items-center gap-1';
+      if (text) text.innerText = 'ยังไม่ได้ตั้งค่า';
+      if (summary) summary.innerText = 'Key: ยังไม่ได้ตั้งค่าคีย์ AI Voice';
+    }
+    if (modelText && status && status.model) modelText.innerText = 'โมเดล: ' + status.model;
+  }
+
+  async function loadAiVoiceStatus() {
+    try {
+      if (window.AiVoice && window.AiVoice.status) {
+        const status = await window.AiVoice.status();
+        refreshAiVoiceStatus(status);
+      }
+    } catch (err) {
+      // โหลดสถานะไม่ได้ — คงแสดง "ยังไม่ได้ตั้งค่า" ไว้
+      console.warn('โหลดสถานะ AI voice ไม่สำเร็จ:', err);
+    }
+  }
+
+  async function saveAiApiKey() {
+    const input = document.getElementById('ai-api-key-input');
+    const btn = document.getElementById('btn-save-ai-key');
+    const key = ((input && input.value) || '').trim();
+
+    if (!key) {
+      showToast('กรุณาวางคีย์ Gemini API ก่อนกดบันทึก', 'vpn_key');
+      return;
+    }
+
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+    try {
+      const status = await window.Api.request('setVoiceConfig', { apiKey: key });
+      if (input) { input.value = ''; input.type = 'password'; }
+      refreshAiVoiceStatus(status);
+      showToast('บันทึกคีย์ AI Voice บนเซิร์ฟเวอร์เรียบร้อย', 'verified');
+    } catch (err) {
+      const msg = (err && err.message) || String(err);
+      if (msg.indexOf('currentKey') !== -1 || msg.indexOf('คีย์อยู่แล้ว') !== -1) {
+        showToast('มีคีย์อยู่แล้ว — ต้องการเปลี่ยนคีย์ ให้ลบ GEMINI_API_KEY ใน Script Properties ก่อน', 'key_off');
+      } else {
+        showToast('บันทึกคีย์ไม่สำเร็จ: ' + msg, 'error');
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    }
+  }
+
   function updateVolumeReadout(val) {
     const readout = document.getElementById('volume-readout');
     if (readout) readout.innerText = val + '%';
@@ -844,5 +939,10 @@
 
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
+<script src="js/ai-voice.js"></script>
+<script>
+  // โหลดสถานะคีย์ AI Voice มาแสดงบนการ์ด (โหลดหลัง ai-voice.js พร้อมใช้)
+  if (typeof loadAiVoiceStatus === 'function') loadAiVoiceStatus();
+</script>
 </body></html>
 

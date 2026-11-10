@@ -29,17 +29,19 @@
 │  ├─ index.html         # หน้าหลัก: ตรวจสลิป + อ่านเสียงยอดเงินเข้า
 │  ├─ money-in.html      # ฟอร์มบันทึกเงินเข้า
 │  ├─ dashboard.html     # ภาพรวม & ปิดกะ
-│  ├─ settings-shift.html# ตั้งค่า & กะ
+│  ├─ settings-shift.html# ตั้งค่า & กะ (รวมตั้งค่าเสียง AI + API key)
 │  ├─ counter-live.html  # จอเคาน์เตอร์
 │  └─ js/
 │     ├─ config.js       # ใส่ Web App URL ที่นี่
 │     ├─ api.js          # ตัวเรียก API
+│     ├─ ai-voice.js     # เสียง AI (Gemini TTS) + fallback เสียงระบบ
 │     └─ app.js          # ดึงข้อมูล + อ่านเสียงยอดเงินเข้า (ใช้ใน index.html)
 ├─ backend/              # Apps Script (clasp)
 │  ├─ appsscript.json
 │  ├─ Code.gs            # doGet/doPost + ping/setupDatabase()
 │  ├─ Sheets.gs          # CRUD กับ Google Sheets
-│  └─ Drive.gs           # อัปโหลดไฟล์ขึ้น Drive
+│  ├─ Drive.gs           # อัปโหลดไฟล์ขึ้น Drive
+│  └─ Voice.gs           # Gemini TTS + เก็บ API key (Script Properties)
 ├─ scripts/
 │  ├─ login.ps1          # เปิดหน้าต่าง login GitHub + Google
 │  ├─ set-api-url.ps1    # อัปเดต API URL ใน frontend
@@ -165,16 +167,39 @@ gh api -X POST repos/{owner}/sheet-drive-app/pages `
 | `list` | GET | `?action=list` (option `&limit=100`) | รายการเงินเข้าล่าสุด (ใหม่สุดก่อน) |
 | `create` | POST | `{ action:'create', payload:{ amount, customer, bank, ref, note, fileName, fileUrl } }` | record ที่สร้าง |
 | `upload` | POST | `{ action:'upload', payload:{ filename, mimeType, base64 } }` | ข้อมูลไฟล์บน Drive |
+| `voiceConfig` | GET | `?action=voiceConfig` | `{ hasKey, model, voice }` — สถานะเสียง AI (ไม่เปิดคีย์) |
+| `setVoiceConfig` | POST | `{ action:'setVoiceConfig', payload:{ apiKey?, voice?, model? } }` | ตั้งคีย์ / โหมดเสียง AI |
+| `speak` | POST | `{ action:'speak', payload:{ text, voice?, model? } }` | `{ audioBase64, mimeType }` เสียงจาก Gemini TTS |
 
 หมายเหตุ: frontend ส่ง POST ด้วย `Content-Type: text/plain` เพื่อเลี่ยง CORS preflight
 เพราะ Apps Script ไม่รองรับ request method `OPTIONS`
+
+## เสียง AI (Gemini TTS)
+
+เสียงประกาศเงินเข้าทั้งหมดสร้างด้วย **Gemini TTS** (โมเดล `gemini-3.8-flash-tts`) — เสียงหญิงไทยนุ่มนวลคล้ายตัวอย่างที่ให้มา
+
+- **คีย์ API เก็บบนเซิร์ฟเวอร์เท่านั้น** (Script Properties `GEMINI_API_KEY`) — ไม่มีคีย์ใน frontend/repo
+- ตั้งคีย์ครั้งแรกได้จากหน้า **ตั้งค่า & กะ** (การ์ด "AI Voice API Key") โดยวางคีย์แล้วกดบันทึก
+  หรือตั้งเองใน Apps Script → Project Settings → Script properties → `GEMINI_API_KEY`
+- เมื่อมีคีย์อยู่แล้ว การเปลี่ยนคีย์ผ่านหน้าเว็บจะถูกปฏิเสธ (กันคนอื่นเขียนทับ) — ต้องลบ `GEMINI_API_KEY` ใน Script Properties ก่อน
+- เลือกน้ำเสียงได้จากการ์ด persona ในหน้า **ตั้งค่า & กะ** แล้วระบบจะใช้เสียงนั้นประกาศทุกหน้า:
+
+| Persona | โหมดเสียง Gemini | ลักษณะ |
+|---|---|---|
+| น้องมะลิ (แนะนำ) | Kore | หญิง เรียบนิ่ง อบอุ่น — ตรงกับตัวอย่างมากที่สุด |
+| น้องใบเฟิร์น | Aoede | หญิง หวาน นุ่มนวล |
+| พี่กานต์ | Orus | ชาย หนักแน่น น่าเชื่อถือ |
+| น้องมีนา | Leda | หญิง สดใส กระตุ้นเต้น |
+
+- ถ้าเรียก AI ไม่สำเร็จ (ไม่มีคีย์/โควต้าหมด/ออฟไลน์) ระบบจะใช้เสียงระบบ (Web Speech API) พูดแทนอัตโนมัติ
 
 ## วิธีทำงานของ "อ่านเสียงยอดเงินเข้า"
 
 1. เปิดหน้า `index.html` (แท็บ "ตรวจสลิป") ทิ้งไว้ที่เคาน์เตอร์
 2. มีรายการใหม่เข้ามา (เพิ่มผ่านหน้า "เพิ่มเงินเข้า" หรือพิมพ์ใน Google Sheet ตรง ๆ)
-3. ระบบ poll ทุก 15 วินาที → เจอรายการใหม่ → เสียงกริ่ง "ding-dong" + พูด
+3. ระบบ poll ทุก 15 วินาที → เจอรายการใหม่ → เสียงกริ่ง "ding-dong" + **เสียง AI (Gemini TTS)** พูด
    *"เงินเข้า 150 บาท จาก คุณกิตติศักดิ์"* พร้อม toast แจ้งเตือน
+   (ถ้า AI ใช้ไม่ได้ จะเปลี่ยนเป็นเสียงระบบอัตโนมัติ)
 
 ## โครงสร้างข้อมูลใน Sheets
 
@@ -197,6 +222,9 @@ gh api -X POST repos/{owner}/sheet-drive-app/pages `
 | `SPREADSHEET_ID` | ID ของสเปรดชีตที่ใช้เป็น DB |
 | `SHEET_NAME` | ชื่อชีต (ค่าเริ่มต้น `Records`) |
 | `DRIVE_FOLDER_ID` | ID ของโฟลเดอร์ Drive สำหรับเก็บไฟล์ |
+| `GEMINI_API_KEY` | คีย์ Gemini สำหรับเสียง AI (ตั้งผ่านหน้าเว็บได้) |
+| `TTS_MODEL` | โมเดล TTS (ค่าเริ่มต้น `gemini-3.8-flash-tts`) |
+| `TTS_VOICE` | โหมดเสียง เช่น `Kore` (ค่าเริ่มต้น) |
 
 ## แก้ปัญหาที่พบบ่อย
 
@@ -209,5 +237,10 @@ gh api -X POST repos/{owner}/sheet-drive-app/pages `
 - **พิมพ์แถวใน Google Sheet เองแล้วไม่มีเสียง** → ไม่จำเป็นต้องใส่คอลัมน์ `id`
   แต่ต้องมีข้อมูลอย่างน้อย 1 ช่อง (ชื่อ/ยอด/หมายเหตุ) และยอดเงินพิมพ์เป็นตัวเลขเท่านั้น เช่น `1500` หรือ `1,500`
 - **ไม่มีเสียงพูด** → เบราว์เซอร์ (โดยเฉพาะ iOS) ต้องแตะหน้าจอก่อน 1 ครั้งเพื่อปลดล็อกเสียง
+- **เสียง AI ใช้ไม่ได้ (เป็นเสียงระบบแทน)** → ตรวจการ์ด "AI Voice API Key" ในหน้าตั้งค่าว่าขึ้น "ตั้งค่าแล้ว" หรือยัง
+  ถ้ายังไม่ได้ตั้ง ให้วางคีย์ Gemini API แล้วกดบันทึก (คีย์เก็บบนเซิร์ฟเวอร์ ไม่แสดงบนหน้าเว็บ)
+  ถ้าขึ้น "ตั้งค่าแล้ว" แต่ยังเป็นเสียงระบบ อาจเป็นโควต้าคีย์หมดหรือเน็ตล่ม — ดู error ใน console (F12)
+- **อยากเปลี่ยนคีย์ Gemini ใหม่** → ไป Apps Script → Project Settings → Script properties
+  ลบ `GEMINI_API_KEY` ออกก่อน แล้วค่อยบันทึกคีย์ใหม่ผ่านหน้าเว็บได้
 - **ไฟล์เปิดจากลิงก์ไม่ได้** → organization อาจห้ามแชร์สาธารณะ ให้แชร์โฟลเดอร์ `App Uploads` เอง
 - **`npm` ใช้ไม่ได้ใน PowerShell** → ตั้ง execution policy: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`

@@ -131,7 +131,11 @@
     var text = announceText(rec);
     if (typeof playHarmonicDingDong === 'function') playHarmonicDingDong();
     setTimeout(function () {
-      if (typeof speakThai === 'function') speakThai(text);
+      if (window.AiVoice && window.AiVoice.speak) {
+        window.AiVoice.speak(text); // AI voice (fallback เป็นเสียงระบบอัตโนมัติ)
+      } else if (typeof speakThai === 'function') {
+        speakThai(text);
+      }
     }, 300);
 
     var title = document.getElementById('voiceBannerTitle');

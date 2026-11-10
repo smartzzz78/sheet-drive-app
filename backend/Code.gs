@@ -10,6 +10,9 @@
  *   GET  ?action=list[&limit=100]                  -> รายการเงินเข้าล่าสุด
  *   POST { action: 'create', payload: {...} }      -> บันทึกรายการเงินเข้า
  *   POST { action: 'upload', payload: {...} }      -> อัปโหลดรูปสลิปขึ้น Drive
+ *   GET  ?action=voiceConfig                       -> สถานะคีย์ AI Voice + โหมดเสียง
+ *   POST { action: 'setVoiceConfig', payload: {} } -> ตั้งคีย์ / โหมดเสียง AI
+ *   POST { action: 'speak', payload: {...} }        -> สร้างเสียง AI (base64)
  */
 
 function doGet(e) {
@@ -45,6 +48,15 @@ function handleRequest_(e, method) {
         break;
       case 'upload':
         data = uploadFile_(payload);
+        break;
+      case 'voiceConfig':
+        data = getVoiceStatus_();
+        break;
+      case 'setVoiceConfig':
+        data = setVoiceConfig_(payload);
+        break;
+      case 'speak':
+        data = speak_(payload);
         break;
       default:
         throw new Error('Unknown action: "' + action + '"');
