@@ -12,7 +12,7 @@
  */
 
 var TTS_DEFAULT_MODEL = 'gemini-3.8-flash-tts';
-var TTS_DEFAULT_VOICE = 'Kore';
+var TTS_DEFAULT_VOICE = 'Zephyr';
 
 function getVoiceSettings_() {
   var props = PropertiesService.getScriptProperties();
