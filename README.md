@@ -201,6 +201,35 @@ gh api -X POST repos/{owner}/sheet-drive-app/pages `
    *"เงินเข้า 150 บาท จาก คุณกิตติศักดิ์"* พร้อม toast แจ้งเตือน
    (ถ้า AI ใช้ไม่ได้ จะเปลี่ยนเป็นเสียงระบบอัตโนมัติ)
 
+## แอป Android (APK)
+
+แอปเป็น **TWA (Trusted Web Activity)** — ตัวห่อที่เปิดเว็บ GitHub Pages ด้วย Chrome engine
+ทำให้กล้อง / อัปโหลดไฟล์ / เสียง ทำงานเหมือนเว็บจริง และ**อัปเดตตามเว็บอัตโนมัติ**
+
+| รายการ | ค่า |
+|---|---|
+| Package ID | `th.coffeesukjai.slipverify` |
+| Version | 1.0.0 (versionCode 1) |
+| Android ที่รองรับ | 7.0 ขึ้นไป (minSdk 24) |
+| URL ที่เปิด | `https://smartzzz78.github.io/sheet-drive-app/index.html` |
+| ไฟล์ติดตั้ง | `coffee-slip-v1.0.0.apk` (~1 MB) |
+
+- ไฟล์ APK / AAB / keystore / รหัสผ่าน **ไม่ได้อยู่ใน repo นี้** (อยู่ใน `.gitignore`)
+  เก็บแยกที่ `Documents\coffee-slip-apk\` พร้อม `README-APK.txt`
+- **keystore ห้ามหายและห้าม commit** — ถ้าหายจะอัปเดตทับแอปเดิมไม่ได้อีก
+- ต้องมีไฟล์ `https://smartzzz78.github.io/.well-known/assetlinks.json`
+  (อยู่ที่ repo `smartzzz78/smartzzz78.github.io` + ต้องมี `.nojekyll`)
+  เพื่อให้แอปเปิดเต็มจอไม่มีแถบ URL — ยืนยันด้วย
+  [Digital Asset Links API](https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https%3A%2F%2Fsmartzzz78.github.io&relation=delegate_permission%2Fcommon.handle_all_urls)
+- build ใหม่เฉพาะเมื่อเปลี่ยนชื่อแอป / ไอคอน / ค่าใน `twa-manifest.json` เท่านั้น
+  (แก้โค้ดเว็บไม่ต้อง build ใหม่):
+
+```bash
+cd "$TEMP/opencode/twa-build"
+bubblewrap update --directory . --skipVersionUpgrade
+BUBBLEWRAP_KEYSTORE_PASSWORD=... BUBBLEWRAP_KEY_PASSWORD=... bubblewrap build
+```
+
 ## โครงสร้างข้อมูลใน Sheets
 
 ชีตแรกของสเปรดชีตที่ผูกกับสคริปต์ (header สร้างให้อัตโนมัติ):
