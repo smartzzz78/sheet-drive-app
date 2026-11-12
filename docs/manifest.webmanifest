@@ -1,0 +1,20 @@
+{
+  "name": "กาแฟสดสุขใจ — ตรวจสลิป",
+  "short_name": "กาแฟสดสุขใจ",
+  "description": "ตรวจสลิปแท้ ประกาศเสียงเงินเข้า สำหรับร้านกาแฟสดสุขใจ",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#faf8ff",
+  "theme_color": "#6f4e37",
+  "lang": "th",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

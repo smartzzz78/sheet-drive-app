@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 
 <html class="" lang="th"><head><title>กาแฟสดสุขใจ — ตรวจสลิป</title><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link rel="manifest" href="manifest.webmanifest"/><meta name="theme-color" content="#6f4e37"/><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
 <style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#faf8ff;color:#131b2e;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}
 @keyframes soundwave { 0%, 100% { height: 6px; } 50% { height: 22px; } }
 .wave-active div:nth-child(1) { animation: soundwave 0.5s infinite ease-in-out; }
@@ -782,5 +783,13 @@
 <script src="js/api.js"></script>
 <script src="js/ai-voice.js"></script>
 <script src="js/app.js"></script>
+<script>
+  // ลงทะเบียน service worker เพื่อให้ติดตั้งเป็นแอป (PWA/APK) ได้
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () { /* ไม่เป็นไร */ });
+    });
+  }
+</script>
 </body></html>
 
