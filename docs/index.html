@@ -139,7 +139,7 @@
 </div>
 <div class="flex flex-col min-w-0">
 <span class="font-label-md text-label-md font-bold text-on-surface" id="voiceBannerTitle">เสียงพูดประกาศยอดเงินอัตโนมัติ</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant truncate" id="voiceStatusText">"ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์"</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate" id="voiceStatusText">"เงินเข้า 150 บาท"</span>
 </div>
 </div>
 <!-- 5-bar Waveform Indicator -->
@@ -538,6 +538,13 @@
     }
   }
 
+  // ข้อความเสียงประกาศเงินเข้า: พูดแค่ยอดเงิน (ไม่พูดชื่อลูกค้า)
+  // 150.00 -> "เงินเข้า 150 บาท", 150.25 -> "เงินเข้า 150.25 บาท"
+  function moneyInSpeech(amount) {
+    var n = Number(amount) || 0;
+    return 'เงินเข้า ' + String(Math.round(n * 100) / 100) + ' บาท';
+  }
+
   // Toast Helper
   let toastTimer = null;
   function showToast(title, message, isError = false) {
@@ -585,11 +592,11 @@
     banner.classList.remove('bg-error', 'text-on-error');
     banner.classList.add('bg-surface-container');
     document.getElementById('voiceBannerTitle').innerText = 'ทดสอบเสียงเตือนสลิปแท้';
-    document.getElementById('voiceStatusText').innerText = '"ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์"';
+    document.getElementById('voiceStatusText').innerText = '"เงินเข้า 150 บาท"';
     document.getElementById('voiceStatusText').classList.remove('text-on-error');
 
     setTimeout(() => {
-      aiSpeak('ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์');
+      aiSpeak(moneyInSpeech(150));
     }, 280);
 
     showToast('ทดสอบระบบเสียงสลิปแท้', 'ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์', false);
@@ -623,7 +630,7 @@
       // Harmonic Ding-Dong + ขานยอดเงิน
       playHarmonicDingDong();
       setTimeout(() => {
-        aiSpeak('ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์');
+        aiSpeak(moneyInSpeech(150));
       }, 300);
 
       showToast('ตรวจสอบสลิปสำเร็จ 100%', 'เงินเข้า 150 บาท จาก คุณกิตติศักดิ์ ร. (K PLUS)', false);
@@ -697,7 +704,7 @@
     setTimeout(() => {
       banner.className = 'p-3.5 rounded-xl bg-surface-container flex items-center justify-between shadow-sm transition-all duration-300';
       document.getElementById('voiceBannerTitle').innerText = 'เสียงพูดประกาศยอดเงินอัตโนมัติ';
-      document.getElementById('voiceStatusText').innerText = '"ตรวจสลิปแท้ 100% เงินเข้า 150 บาท จาก คุณกิตติศักดิ์"';
+      document.getElementById('voiceStatusText').innerText = '"เงินเข้า 150 บาท"';
       document.getElementById('voiceStatusText').classList.remove('text-on-error');
     }, 5000);
   }
@@ -733,7 +740,7 @@
     getAudioContext();
     playHarmonicDingDong();
     setTimeout(() => {
-      aiSpeak(`ตรวจสลิปแท้ 100% เงินเข้า ${currentModalData.amount} บาท จาก ${currentModalData.customer}`);
+      aiSpeak(moneyInSpeech(currentModalData.amount));
     }, 280);
   }
 

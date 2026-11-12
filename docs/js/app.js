@@ -4,7 +4,7 @@
  * หน้าที่:
  *  1. ดึงรายการเงินเข้าจาก Apps Script API มาแสดงในฟีด
  *  2. Poll ทุก 15 วินาที — ถ้ามีรายการใหม่ = เสียงกริ่ง + อ่านออกเสียงยอดเงิน
- *     ("เงินเข้า 150 บาท จาก คุณกิตติศักดิ์")
+ *     (พูดแค่ "เงินเข้า 150 บาท" — ไม่พูดชื่อลูกค้า แต่บนจอโชว์ชื่อด้วย)
  *  3. ปุ่ม "ซิงก์ธนาคาร" กลายเป็นการดึงข้อมูลจริง
  *
  * ใช้ร่วมกับฟังก์ชันเสียงของหน้า (playHarmonicDingDong, speakThai, showToast,
@@ -120,15 +120,27 @@
 
   /* ---------- เสียงอ่านยอดเงินเข้า ---------- */
 
+  // ข้อความที่ "พูด" — เอาแค่ยอดเงินเข้า ไม่พูดชื่อลูกค้า
   function announceText(rec) {
-    var amount = Number(rec.amount) || 0;
-    var text = 'เงินเข้า ' + amount + ' บาท';
+    return 'เงินเข้า ' + formatBaht(rec.amount) + ' บาท';
+  }
+
+  // ข้อความที่แสดงบนจอ — มีชื่อลูกค้าเพื่อให้เจ้าของร้านตรวจสอบได้
+  function announceDisplayText(rec) {
+    var text = announceText(rec);
     if (rec.customer) text += ' จาก ' + rec.customer;
     return text;
   }
 
+  function formatBaht(value) {
+    var n = Number(value) || 0;
+    // 150.00 -> "150", 150.25 -> "150.25"
+    return String(Math.round(n * 100) / 100);
+  }
+
   function speakRecord(rec) {
     var text = announceText(rec);
+    var displayText = announceDisplayText(rec);
     if (typeof playHarmonicDingDong === 'function') playHarmonicDingDong();
     setTimeout(function () {
       if (window.AiVoice && window.AiVoice.speak) {
@@ -141,10 +153,10 @@
     var title = document.getElementById('voiceBannerTitle');
     var status = document.getElementById('voiceStatusText');
     if (title) title.innerText = 'ประกาศยอดเงินเข้าล่าสุด';
-    if (status) status.innerText = '"' + text + '"';
+    if (status) status.innerText = '"' + displayText + '"';
 
     if (typeof showToast === 'function') {
-      showToast('เงินเข้าใหม่', text, false);
+      showToast('เงินเข้าใหม่', displayText, false);
     }
   }
 

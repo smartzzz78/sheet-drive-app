@@ -164,7 +164,7 @@
     getAudioContext();
     playHarmonicDingDong();
     setTimeout(function () {
-      window.AiVoice.speak('เงินเข้า หนึ่งร้อยห้าสิบบาท จาก คุณกิตติศักดิ์');
+      window.AiVoice.speak('เงินเข้า 150 บาท');
     }, 300);
     setStatus('ทดสอบเสียงประกาศแล้ว (AI voice) ถ้าไม่ได้ยินให้แตะหน้าจอก่อนแล้วลองอีกครั้ง', false);
   });
@@ -214,7 +214,7 @@
 
       playHarmonicDingDong();
       setTimeout(function () {
-        window.AiVoice.speak('บันทึกเงินเข้า ' + amount + ' บาท เรียบร้อย' + (payload.customer ? ' จาก ' + payload.customer : ''));
+        window.AiVoice.speak('เงินเข้า ' + (Math.round(amount * 100) / 100) + ' บาท');
       }, 300);
       setStatus('บันทึกเรียบร้อย: +' + amount.toFixed(2) + ' บาท' + (payload.customer ? ' จาก ' + payload.customer : ''), false);
 
