@@ -110,6 +110,56 @@ function listRecords_(limitParam) {
   return records.reverse().slice(0, limit);
 }
 
+/**
+ * สรุปยอดเงิน: ยอดรวมของวันนี้ + ยอดรวมทั้งหมด (คำนวณฝั่งเซิร์ฟเวอร์)
+ * ใช้กับ action=summary เพื่อให้ยอดรวมถูกต้องแม้หน้าเว็บดึงมาแสดงแค่บางรายการ
+ */
+function summarizeRecords_() {
+  var sheet = getSheet_();
+  var lastRow = sheet.getLastRow();
+
+  var summary = {
+    date: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'),
+    todayCount: 0,
+    todayTotal: 0,
+    totalCount: 0,
+    totalAmount: 0
+  };
+
+  if (lastRow < 2) return summary;
+
+  var tz = Session.getScriptTimeZone();
+  var values = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
+
+  for (var i = 0; i < values.length; i++) {
+    var row = values[i];
+    var amount = Number(String(row[4]).replace(/[,\s฿]/g, ''));
+    if (!isFinite(amount)) amount = 0;
+
+    // ข้ามแถวว่าง (ชีตอาจมีแถวที่จัดรูปแบบไว้แต่ไม่มีข้อมูล)
+    var hasData = false;
+    for (var c = 0; c < HEADERS.length; c++) {
+      if (String(row[c]).trim() !== '') { hasData = true; break; }
+    }
+    if (!hasData) continue;
+
+    summary.totalCount += 1;
+    summary.totalAmount += amount;
+
+    var created = row[8];
+    if (created instanceof Date) {
+      if (Utilities.formatDate(created, tz, 'yyyy-MM-dd') === summary.date) {
+        summary.todayCount += 1;
+        summary.todayTotal += amount;
+      }
+    }
+  }
+
+  summary.todayTotal = Math.round(summary.todayTotal * 100) / 100;
+  summary.totalAmount = Math.round(summary.totalAmount * 100) / 100;
+  return summary;
+}
+
 function createRecord_(payload) {
   payload = payload || {};
 

@@ -111,10 +111,46 @@
 
   function updateStats(records) {
     var countEl = document.getElementById('todayPassedCount');
-    if (countEl) {
-      var todayCount = 0;
-      (records || []).forEach(function (r) { if (isToday(r.createdAt)) todayCount++; });
-      countEl.innerText = String(todayCount);
+    var todayCount = 0;
+    var todaySum = 0;
+
+    (records || []).forEach(function (r) {
+      if (isToday(r.createdAt)) {
+        todayCount++;
+        todaySum += Number(r.amount) || 0;
+      }
+    });
+
+    if (countEl) countEl.innerText = String(todayCount);
+
+    // ใช้ยอดจากเซิร์ฟเวอร์ (แม่นกว่า) ถ้ายังไม่ได้มาก็คำนวณจากรายการที่ดึงมา
+    if (lastSummary == null) {
+      renderTodayTotal({ todayCount: todayCount, todayTotal: Math.round(todaySum * 100) / 100 });
+    }
+  }
+
+  /* ---------- ยอดเงินรวมวันนี้ ---------- */
+
+  var lastSummary = null;
+
+  function formatMoney(value) {
+    var n = Number(value) || 0;
+    return n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function renderTodayTotal(summary) {
+    var amountEl = document.getElementById('todayTotalAmount');
+    var subEl = document.getElementById('todayTotalSub');
+    if (!amountEl || !summary) return;
+
+    var total = Number(summary.todayTotal) || 0;
+    var count = Number(summary.todayCount) || 0;
+
+    amountEl.innerText = '฿' + formatMoney(total);
+    if (subEl) {
+      subEl.innerText = count > 0
+        ? count + ' รายการวันนี้'
+        : 'ยังไม่มีรายการวันนี้';
     }
   }
 
@@ -215,7 +251,7 @@
   }
 
   function refresh() {
-    return window.Api.request('list').then(applyRecords).catch(function (err) {
+    var listRequest = window.Api.request('list').then(applyRecords).catch(function (err) {
       console.warn('ดึงข้อมูลจาก Apps Script ไม่สำเร็จ:', err && err.message ? err.message : err);
       var title = document.getElementById('voiceBannerTitle');
       if (title && !initialized) {
@@ -225,6 +261,19 @@
       }
       initialized = true;
     });
+
+    var summaryRequest = window.Api.request('summary').then(function (summary) {
+      lastSummary = summary;
+      renderTodayTotal(summary);
+      return summary;
+    }).catch(function (err) {
+      // deployment เก่ายังไม่มี action นี้ — ใช้ยอดที่คำนวณจากรายการแทน
+      lastSummary = null;
+      console.warn('ดึงยอดรวมวันนี้ไม่สำเร็จ:', err && err.message ? err.message : err);
+      return null;
+    });
+
+    return Promise.all([listRequest, summaryRequest]);
   }
 
   /* ---------- ปุ่ม "ซิงก์ธนาคาร" ให้ดึงข้อมูลจริง ---------- */

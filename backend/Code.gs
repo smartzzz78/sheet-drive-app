@@ -43,6 +43,9 @@ function handleRequest_(e, method) {
       case 'list':
         data = listRecords_(params.limit);
         break;
+      case 'summary':
+        data = summarizeRecords_();
+        break;
       case 'create':
         data = createRecord_(payload);
         break;
