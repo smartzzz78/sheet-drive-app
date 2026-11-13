@@ -166,6 +166,7 @@ gh api -X POST repos/{owner}/sheet-drive-app/pages `
 |---|---|---|---|
 | `ping` | GET | `?action=ping` | `{ ok, time, spreadsheetId, sheetName, headers, rowCount }` (สร้าง header ให้อัตโนมัติ) |
 | `list` | GET | `?action=list` (option `&limit=100`) | รายการเงินเข้าล่าสุด (ใหม่สุดก่อน) |
+| `summary` | GET | `?action=summary` | `{ date, todayCount, todayTotal, totalCount, totalAmount }` — ยอดรวมวันนี้/ทั้งหมด (คำนวณฝั่งเซิร์ฟเวอร์ ใช้กับยอดเงินรวมบนหน้าจอ) |
 | `create` | POST | `{ action:'create', payload:{ amount, customer, bank, ref, note, fileName, fileUrl } }` | record ที่สร้าง |
 | `upload` | POST | `{ action:'upload', payload:{ filename, mimeType, base64 } }` | ข้อมูลไฟล์บน Drive |
 | `voiceConfig` | GET | `?action=voiceConfig` | `{ hasKey, model, voice }` — สถานะเสียง AI (ไม่เปิดคีย์) |
@@ -201,6 +202,17 @@ gh api -X POST repos/{owner}/sheet-drive-app/pages `
 3. ระบบ poll ทุก 15 วินาที → เจอรายการใหม่ → เสียงกริ่ง "ding-dong" + **เสียง AI (Gemini TTS)** พูด
    *"เงินเข้า 150 บาท"* (พูดแค่ยอดเงิน ไม่พูดชื่อลูกค้า — แต่ toast และแบนเนอร์บนจอแสดงชื่อลูกค้าด้วย)
    (ถ้า AI ใช้ไม่ได้ จะเปลี่ยนเป็นเสียงระบบอัตโนมัติ)
+
+## ยอดเงินรวมวันนี้
+
+หน้าแรกมีการ์ด **"ยอดเงินรวมวันนี้"** (ตัวเลขใหญ่ สีหลัก) ใต้แบนเนอร์เสียง
+
+- ยอดคำนวณฝั่งเซิร์ฟเวอร์จาก `action=summary` โดยใช้เขตเวลา `Asia/Bangkok` ของสคริปต์
+  → ถูกต้องแม้หน้าเว็บแสดงรายการเพียง 100 รายการล่าสุด
+- นับเฉพาะรายการที่ `createdAt` เป็นวันนี้ พร้อมจำนวนรายการกำกับ ("N รายการวันนี้")
+- อัปเดตทุกครั้งที่ poll (15 วินาที) และเมื่อกด "ซิงก์ธนาคาร"
+- ถ้า backend รุ่นเก่ายังไม่มี `summary` หน้าเว็บจะคำนวณยอดจากรายการที่ดึงมาให้แทนอัตโนมัติ
+- เป็นการแสดงบนจอเท่านั้น — เสียงยังพูดแค่ "เงินเข้า … บาท" ตามเดิม
 
 ## แอป Android (APK)
 
