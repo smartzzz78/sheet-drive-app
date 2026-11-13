@@ -1,0 +1,309 @@
+<!DOCTYPE html><html class="" lang="th"><head><title>กาแฟสดสุขใจ — ตั้งค่าเสียง</title><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_tab" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#faf8ff;color:#131b2e;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}
+@keyframes soundwave { 0%, 100% { height: 6px; } 50% { height: 22px; } }
+.wave-active div:nth-child(1) { animation: soundwave 0.5s infinite ease-in-out; }
+.wave-active div:nth-child(2) { animation: soundwave 0.4s infinite ease-in-out 0.1s; }
+.wave-active div:nth-child(3) { animation: soundwave 0.6s infinite ease-in-out 0.2s; }
+.wave-active div:nth-child(4) { animation: soundwave 0.45s infinite ease-in-out 0.15s; }
+.wave-active div:nth-child(5) { animation: soundwave 0.55s infinite ease-in-out 0.05s; }
+</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"primary-fixed-dim": "#4edea3", "inverse-on-surface": "#eef0ff", "secondary-fixed": "#cce5ff", "inverse-surface": "#283044", "surface-tint": "#006c49", "on-primary-fixed-variant": "#005236", surface: "#faf8ff", background: "#faf8ff", "surface-container-highest": "#dae2fd", "on-tertiary-fixed": "#001c37", "secondary-container": "#5bb8fe", tertiary: "#1961a1", secondary: "#006398", "on-primary-fixed": "#002113", "surface-container": "#eaedff", "inverse-primary": "#4edea3", "surface-container-low": "#f2f3ff", "surface-container-high": "#e2e7ff", "surface-variant": "#dae2fd", "on-surface-variant": "#3c4a42", "secondary-fixed-dim": "#93ccff", "on-primary": "#ffffff", "tertiary-container": "#6ca6eb", primary: "#006c49", error: "#ba1a1a", "surface-bright": "#faf8ff", "tertiary-fixed": "#d2e4ff", outline: "#6c7a71", "primary-container": "#10b981", "on-background": "#131b2e", "outline-variant": "#bbcabf", "on-secondary-container": "#00476e", "surface-dim": "#d2d9f4", "on-tertiary-container": "#003a69", "tertiary-fixed-dim": "#a1c9ff", "on-secondary-fixed": "#001d31", "on-error": "#ffffff", "on-secondary": "#ffffff", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "on-surface": "#131b2e", "primary-fixed": "#6ffbbe", "on-error-container": "#93000a", "on-tertiary": "#ffffff", "on-secondary-fixed-variant": "#004b73", "on-tertiary-fixed-variant": "#004880", "on-primary-container": "#00422b"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"space-md": "1rem", gutter: "1rem", "space-lg": "1.5rem", "margin-mobile": "1rem", margin: "1.5rem", "space-xl": "2.25rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "gutter-mobile": "0.75rem"}, fontFamily: {"headline-lg-mobile": ["Space Grotesk"], "display-xl": ["Space Grotesk"], "label-lg": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "title-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], headline: ["Space Grotesk"], display: ["Space Grotesk"], body: ["Plus Jakarta Sans"], label: ["Plus Jakarta Sans"]}, fontSize: {"headline-lg-mobile": ["26px", {lineHeight: "34px", letterSpacing: "-0.01em", fontWeight: "700"}], "display-xl": ["56px", {lineHeight: "64px", letterSpacing: "-0.02em", fontWeight: "700"}], "label-lg": ["14px", {lineHeight: "18px", letterSpacing: "0.02em", fontWeight: "600"}], "title-md": ["18px", {lineHeight: "24px", fontWeight: "600"}], "title-lg": ["20px", {lineHeight: "28px", fontWeight: "600"}], "body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "label-sm": ["11px", {lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "500"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "700"}], "display-xl-mobile": ["40px", {lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700"}], "label-md": ["12px", {lineHeight: "16px", letterSpacing: "0.04em", fontWeight: "600"}]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<link rel="manifest" href="manifest.webmanifest"/><meta name="theme-color" content="#6f4e37"/><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
+</head><body class="bg-surface text-on-surface font-body-md flex flex-col min-h-screen" data-mode="connect">
+<header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.06)]">
+  <div class="h-16 px-margin-mobile flex items-center justify-between">
+    <div class="flex items-center gap-space-sm">
+      <a aria-label="กลับหน้าตรวจสลิป" class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center active:scale-95 transition-transform" href="index.html">
+        <span class="material-symbols-outlined text-primary text-[22px]">arrow_back</span>
+      </a>
+      <div class="flex flex-col">
+        <span class="font-title-md text-title-md text-on-surface leading-tight">ตั้งค่าเสียง</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">กาแฟสดสุขใจ</span>
+      </div>
+    </div>
+    <button aria-label="ทดสอบเสียง" class="w-10 h-10 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-primary active:scale-95 transition-transform" onclick="testCurrentVoice()">
+      <span class="material-symbols-outlined text-[20px]">volume_up</span>
+    </button>
+  </div>
+</header>
+
+<div class="fixed top-20 left-4 right-4 z-50 pointer-events-none transition-all duration-300 transform flex justify-center opacity-0 -translate-y-2" id="toast-banner">
+  <div class="bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 max-w-sm w-full">
+    <span class="material-symbols-outlined text-primary-fixed" id="toast-icon">check_circle</span>
+    <span class="font-body-md text-body-md font-medium" id="toast-msg"></span>
+  </div>
+</div>
+
+<main class="flex flex-col relative w-full pt-16 pb-24 bg-surface flex-1">
+  <div class="px-margin-mobile py-space-md flex flex-col gap-space-md">
+
+    <div class="bg-primary-container/20 rounded-xl p-space-md border border-primary/20 flex flex-col gap-1.5">
+      <div class="flex items-center justify-between gap-2">
+        <span class="font-label-md text-label-md font-bold text-on-surface">เสียงที่ใช้ประกาศยอดเงินเข้า</span>
+        <span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-[11px] font-bold whitespace-nowrap" id="current-voice-badge">กำลังโหลด…</span>
+      </div>
+      <p class="font-label-sm text-label-sm text-on-surface-variant" id="current-voice-desc">ระบบพูดแค่ “เงินเข้า … บาท” (ไม่พูดชื่อลูกค้า)</p>
+    </div>
+
+    <div class="flex flex-col gap-space-xs">
+      <div class="flex items-center gap-2 px-1">
+        <span class="material-symbols-outlined text-primary text-[20px]">record_voice_over</span>
+        <h2 class="font-title-md text-title-md text-on-surface">เลือกเสียงพากย์</h2>
+      </div>
+      <div class="flex flex-col gap-space-xs" id="persona-list"></div>
+      <p class="font-label-sm text-label-sm text-on-surface-variant px-1 leading-relaxed">เลือกแล้วบันทึกบนเซิร์ฟเวอร์ทันที — ทุกหน้า (รวมประกาศอัตโนมัติ) จะใช้เสียงนี้</p>
+    </div>
+
+    <button class="w-full py-3.5 rounded-xl bg-primary text-on-primary font-title-md text-title-md font-bold flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-transform" onclick="testCurrentVoice()">
+      <span class="material-symbols-outlined text-[22px]">play_circle</span>
+      <span id="test-voice-label">ทดสอบฟังเสียง</span>
+    </button>
+
+    <div class="hidden h-8 items-center justify-center gap-1" id="soundwave-container">
+      <div class="w-1.5 bg-primary rounded-full" style="height:6px"></div>
+      <div class="w-1.5 bg-primary rounded-full" style="height:6px"></div>
+      <div class="w-1.5 bg-primary rounded-full" style="height:6px"></div>
+      <div class="w-1.5 bg-primary rounded-full" style="height:6px"></div>
+      <div class="w-1.5 bg-primary rounded-full" style="height:6px"></div>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm border border-outline-variant/30 flex flex-col gap-space-sm">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-[20px]">key</span>
+          <span class="font-title-md text-title-md text-on-surface">คีย์ Gemini (เสียง AI)</span>
+        </div>
+        <span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-[11px] font-bold whitespace-nowrap" id="ai-key-status-badge">กำลังโหลด…</span>
+      </div>
+      <p class="font-label-sm text-label-sm text-on-surface-variant" id="ai-key-status-text">—</p>
+      <div class="flex items-center gap-2">
+        <input class="flex-1 min-w-0 bg-surface-container-low text-on-surface p-2.5 rounded-lg border-0 outline-none focus:ring-2 focus:ring-primary font-label-md text-label-md" id="ai-api-key-input" placeholder="วางคีย์ Gemini API ที่นี่" type="password"/>
+        <button class="px-4 py-2.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold active:scale-95 whitespace-nowrap" id="btn-save-ai-key" onclick="saveAiApiKey()">บันทึก</button>
+      </div>
+      <p class="font-label-sm text-label-sm text-on-surface-variant" id="ai-key-summary">Key: —</p>
+      <p class="font-label-sm text-label-sm text-on-surface-variant" id="ai-model-text">โมเดล: —</p>
+      <p class="font-label-sm text-label-sm text-on-surface-variant leading-relaxed">คีย์ถูกเก็บที่ฝั่งเซิร์ฟเวอร์ (Apps Script) ไม่ถูกส่งออกมาหน้าเว็บ และไม่ถูกบันทึกในเครื่อง</p>
+    </div>
+
+  </div>
+</main>
+
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)]"><div class="grid grid-cols-2 items-center h-16 px-1"><a class="flex flex-col items-center justify-center h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" href="index.html"><span class="material-symbols-outlined text-[22px]">verified_user</span><span class="font-label-sm text-label-sm text-center">ตรวจสลิป &amp; เงินเข้า</span></a><a aria-current="page" class="flex flex-col items-center justify-center h-12 gap-0.5 transition-colors text-primary font-bold" href="settings-voice.html"><span class="material-symbols-outlined text-[22px]">record_voice_over</span><span class="font-label-sm text-label-sm text-center">ตั้งค่าเสียง</span></a></div></nav>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ai-voice.js"></script>
+<script>
+  var PERSONAS = [
+    { key: 'mali',    name: 'น้องมะลิ',      desc: 'สดใส เป็นกันเอง',      voice: 'Zephyr' },
+    { key: 'baifern', name: 'น้องใบเฟิร์น',  desc: 'นุ่มนวล อ่อนหวาน',     voice: 'Aoede'  },
+    { key: 'karn',    name: 'พี่กานต์',      desc: 'ผู้ชาย อบอุ่น น่าเชื่อถือ', voice: 'Orus'   },
+    { key: 'meena',   name: 'น้องมีนา',      desc: 'เสียงสูง ร่าเริง',       voice: 'Leda'   }
+  ];
+  var SAMPLE_TEXT = 'เงินเข้า 150 บาท';
+  var selectedVoice = 'Zephyr';
+  var toastTimeout = null;
+
+  function showToast(text, icon) {
+    var banner = document.getElementById('toast-banner');
+    var msg = document.getElementById('toast-msg');
+    var ico = document.getElementById('toast-icon');
+    if (!banner || !msg) return;
+    msg.innerText = text;
+    if (ico) ico.innerText = icon || 'check_circle';
+    banner.classList.remove('opacity-0', '-translate-y-2');
+    banner.classList.add('opacity-100', 'translate-y-0');
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(function () {
+      banner.classList.remove('opacity-100', 'translate-y-0');
+      banner.classList.add('opacity-0', '-translate-y-2');
+    }, 2800);
+  }
+
+  function setWaveActive(active) {
+    var wave = document.getElementById('soundwave-container');
+    if (!wave) return;
+    if (active) {
+      wave.classList.remove('hidden');
+      wave.classList.add('flex', 'wave-active');
+    } else {
+      wave.classList.add('hidden');
+      wave.classList.remove('flex', 'wave-active');
+    }
+  }
+
+  function personaByVoice(voice) {
+    for (var i = 0; i < PERSONAS.length; i++) {
+      if (PERSONAS[i].voice === voice) return PERSONAS[i];
+    }
+    return null;
+  }
+
+  function renderPersonas() {
+    var list = document.getElementById('persona-list');
+    if (!list) return;
+    var html = '';
+    for (var i = 0; i < PERSONAS.length; i++) {
+      var p = PERSONAS[i];
+      var active = p.voice === selectedVoice;
+      var cls = active
+        ? 'p-3 rounded-xl border-2 border-primary bg-primary/5 flex items-center justify-between gap-2 transition-all w-full text-left'
+        : 'p-3 rounded-xl border border-outline-variant/30 bg-surface-container-low hover:bg-surface-container flex items-center justify-between gap-2 transition-all w-full text-left';
+      html += '<button type="button" data-voice="' + p.voice + '" class="' + cls + '">'
+        + '<span class="flex items-center gap-3 min-w-0">'
+        + '<span class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center shrink-0">'
+        + '<span class="material-symbols-outlined text-primary text-[18px]">graphic_eq</span></span>'
+        + '<span class="flex flex-col min-w-0">'
+        + '<span class="font-label-lg text-label-lg font-bold text-on-surface truncate">' + p.name + '</span>'
+        + '<span class="font-label-sm text-label-sm text-on-surface-variant truncate">' + p.desc + ' • ' + p.voice + '</span>'
+        + '</span></span>'
+        + '<span class="material-symbols-outlined ' + (active ? 'text-primary' : 'text-outline-variant') + ' shrink-0">'
+        + (active ? 'check_circle' : 'radio_button_unchecked') + '</span>'
+        + '</button>';
+    }
+    list.innerHTML = html;
+
+    var badge = document.getElementById('current-voice-badge');
+    var desc = document.getElementById('current-voice-desc');
+    var p2 = personaByVoice(selectedVoice);
+    if (badge) badge.innerText = p2 ? p2.name : selectedVoice;
+    if (desc) desc.innerText = 'เสียง ' + selectedVoice + ' • พูดแค่ “เงินเข้า … บาท” (ไม่พูดชื่อลูกค้า)';
+  }
+
+  function selectVoice(voice) {
+    selectedVoice = voice;
+    renderPersonas();
+    if (window.Api) {
+      window.Api.request('setVoiceConfig', { voice: voice }).catch(function () { /* เงียบไว้ */ });
+    }
+    showToast('เลือกเสียง: ' + (personaByVoice(voice) || {}).name + ' เรียบร้อย', 'record_voice_over');
+  }
+
+  // ผูก event แบบ delegation (ไม่ใช้ inline onclick ในไอคอนที่สร้างจาก JS)
+  document.getElementById('persona-list').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-voice]');
+    if (!btn) return;
+    selectVoice(btn.getAttribute('data-voice'));
+  });
+
+  function testCurrentVoice() {
+    var label = document.getElementById('test-voice-label');
+    if (label) label.innerText = 'กำลังเล่นเสียง…';
+    setWaveActive(true);
+
+    var done = function () {
+      setWaveActive(false);
+      if (label) label.innerText = 'ทดสอบฟังเสียง';
+    };
+
+    if (window.AiVoice && window.AiVoice.speak) {
+      window.AiVoice.speak(SAMPLE_TEXT, { voice: selectedVoice }).then(function (src) {
+        done();
+        if (src === 'system') {
+          showToast('ยังใช้เสียง AI ไม่ได้ (คีย์/โควต้า) — เล่นด้วยเสียงระบบแทน', 'info');
+        }
+      }).catch(function () {
+        done();
+      });
+    } else {
+      // ไม่มี AiVoice: ใช้เสียงระบบ
+      try {
+        var u = new SpeechSynthesisUtterance(SAMPLE_TEXT);
+        u.lang = 'th-TH';
+        u.onend = done;
+        u.onerror = done;
+        window.speechSynthesis.speak(u);
+      } catch (e) { done(); }
+    }
+  }
+
+  function refreshAiVoiceStatus(status) {
+    var badge = document.getElementById('ai-key-status-badge');
+    var text = document.getElementById('ai-key-status-text');
+    var summary = document.getElementById('ai-key-summary');
+    var modelText = document.getElementById('ai-model-text');
+
+    if (status && status.hasKey) {
+      if (badge) {
+        badge.className = 'px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-[11px] font-bold whitespace-nowrap';
+        badge.innerText = 'ตั้งค่าแล้ว';
+      }
+      if (text) text.innerText = 'พร้อมใช้งาน • เสียง ' + (status.voice || 'Zephyr');
+      if (summary) summary.innerText = 'Key: ตั้งค่าแล้ว (เก็บบนเซิร์ฟเวอร์ ไม่แสดงบนหน้าเว็บ)';
+    } else {
+      if (badge) {
+        badge.className = 'px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-[11px] font-bold whitespace-nowrap';
+        badge.innerText = 'ยังไม่ได้ตั้งค่า';
+      }
+      if (text) text.innerText = 'ยังไม่มีคีย์ — ระบบจะใช้เสียงพูดของเครื่องแทน';
+      if (summary) summary.innerText = 'Key: ยังไม่ได้ตั้งค่าคีย์ AI Voice';
+    }
+    if (modelText) modelText.innerText = 'โมเดล: ' + ((status && status.model) || 'gemini-3.8-flash-tts');
+
+    // ซิงก์การ์ดที่เลือกกับเสียงที่เซิร์ฟเวอร์ใช้จริง
+    if (status && status.voice) {
+      selectedVoice = status.voice;
+      renderPersonas();
+    }
+  }
+
+  async function loadAiVoiceStatus() {
+    try {
+      if (window.AiVoice && window.AiVoice.status) {
+        refreshAiVoiceStatus(await window.AiVoice.status());
+        return;
+      }
+    } catch (err) {
+      console.warn('โหลดสถานะเสียงไม่สำเร็จ:', err);
+    }
+    renderPersonas();
+  }
+
+  async function saveAiApiKey() {
+    var input = document.getElementById('ai-api-key-input');
+    var btn = document.getElementById('btn-save-ai-key');
+    var key = ((input && input.value) || '').trim();
+    if (!key) {
+      showToast('กรุณาวางคีย์ Gemini API ก่อนกดบันทึก', 'vpn_key');
+      return;
+    }
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+    try {
+      var status = await window.Api.request('setVoiceConfig', { apiKey: key });
+      if (input) input.value = '';
+      refreshAiVoiceStatus(status);
+      showToast('บันทึกคีย์เสียง AI บนเซิร์ฟเวอร์เรียบร้อย', 'verified');
+    } catch (err) {
+      var msg = (err && err.message) || String(err);
+      if (msg.indexOf('currentKey') !== -1 || msg.indexOf('คีย์อยู่แล้ว') !== -1) {
+        showToast('มีคีย์อยู่แล้ว — ต้องลบคีย์เดิมใน Script Properties ก่อนจึงจะเปลี่ยนได้', 'key_off');
+      } else {
+        showToast('บันทึกคีย์ไม่สำเร็จ: ' + msg, 'error');
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    }
+  }
+
+  renderPersonas();
+  loadAiVoiceStatus();
+
+  // ปลดล็อกเสียงบนมือถือ (ต้องมีการแตะก่อนเล่นเสียง)
+  ['touchstart', 'touchend', 'click', 'pointerdown'].forEach(function (ev) {
+    window.addEventListener(ev, function () {
+      if ('speechSynthesis' in window && window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    }, { passive: true });
+  });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () { /* ไม่เป็นไร */ });
+    });
+  }
+</script>
+</body></html>
