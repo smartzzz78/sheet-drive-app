@@ -102,7 +102,7 @@
     if (!records || records.length === 0) {
       listEl.innerHTML =
         '<p class="font-body-md text-body-md text-on-surface-variant py-6 text-center leading-relaxed">' +
-        'ยังไม่มีรายการเงินเข้า — เพิ่มรายการใหม่ได้ที่แท็บ "เพิ่มเงินเข้า"<br>หรือพิมพ์ใน Google Sheet โดยตรงแล้วระบบจะอ่านเสียงให้เอง</p>';
+        'ยังไม่มีรายการเงินเข้า — กดลิงก์ "＋ เพิ่มเงินเข้า" ด้านบน<br>หรือพิมพ์ใน Google Sheet โดยตรงแล้วระบบจะอ่านเสียงให้เอง</p>';
       return;
     }
 

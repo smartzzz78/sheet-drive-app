@@ -43,7 +43,7 @@
 <span class="material-symbols-outlined text-[16px]">verified</span>
 <span class="font-label-sm text-label-sm text-on-surface-variant">ผ่านวันนี้</span>
 </div>
-<span class="font-headline-md text-headline-md text-on-surface font-bold leading-tight" id="todayPassedCount">38</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold leading-tight" id="todayPassedCount">0</span>
 <span class="font-label-sm text-label-sm text-primary">รายการสมบูรณ์</span>
 </div>
 <div class="flex flex-col p-3 rounded-xl bg-surface-container-lowest shadow-sm">
@@ -194,96 +194,7 @@
 </div>
 <!-- Feed Cards -->
 <div class="flex flex-col gap-space-sm" id="slipFeedList">
-<!-- Item 1: Kittisak R. (Highlight Primary) -->
-<article class="flex flex-col p-space-md rounded-2xl bg-surface-container-lowest shadow-md gap-3 relative border border-surface-container-high/60" id="card-kittisak">
-<div class="flex items-start justify-between">
-<div class="flex items-center gap-3">
-<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center font-bold text-primary shadow-sm relative">
-<span class="material-symbols-outlined text-[28px]">payments</span>
-<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
-<span class="material-symbols-outlined text-[10px]">check</span>
-</span>
-</div>
-<div class="flex flex-col min-w-0">
-<div class="flex items-center gap-1.5">
-<span class="font-title-md text-title-md text-on-surface font-bold truncate">คุณกิตติศักดิ์ ร.</span>
-<span class="px-1.5 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">K PLUS</span>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant">เวลา 14:28:45 น. • Ref: 2023112414285192</span>
-</div>
-</div>
-<div class="flex flex-col items-end">
-<span class="font-headline-md text-headline-md font-bold text-primary leading-tight">+฿150.00</span>
-<span class="font-label-sm text-label-sm text-primary font-semibold">พร้อมเพย์</span>
-</div>
-</div>
-<!-- Verification Success Shield Badge -->
-<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
-<span class="font-label-sm text-label-sm text-primary font-bold">สลิปแท้ 100% ตรงกับยอดในบัญชี SCB/KBANK</span>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">NDID Verified</span>
-</div>
-<!-- Quick Operations -->
-<div class="grid grid-cols-2 gap-space-xs pt-1">
-<button class="h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 transition-colors active:scale-98" onclick="openSlipModal('2023112414285192', '150.00', 'คุณกิตติศักดิ์ ร.', 'กสิกรไทย (K PLUS)', '14:28:45', 'xxx-x-x1482-9')">
-<span class="material-symbols-outlined text-[18px] text-secondary">visibility</span>
-<span>ดูหลักฐานสลิป</span>
-</button>
-<button class="h-10 rounded-xl bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-transform" onclick="printReceipt('2023112414285192', '150.00', 'คุณกิตติศักดิ์ ร.')">
-<span class="material-symbols-outlined text-[18px]">receipt_long</span>
-<span>พิมพ์ใบเสร็จ</span>
-</button>
-</div>
-</article>
-<!-- Item 2: Patcharaporn M. -->
-<article class="flex flex-col p-space-md rounded-2xl bg-surface-container-lowest shadow-sm gap-2.5 border border-surface-container-high/40" id="card-patcharaporn">
-<div class="flex items-start justify-between">
-<div class="flex items-center gap-3">
-<div class="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center font-bold text-secondary shadow-sm">
-<span class="material-symbols-outlined text-[24px]">account_balance</span>
-</div>
-<div class="flex flex-col min-w-0">
-<div class="flex items-center gap-1.5">
-<span class="font-title-md text-title-md text-on-surface font-bold truncate">คุณพัชราภรณ์ ม.</span>
-<span class="px-1.5 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">SCB EASY</span>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant">เวลา 14:12:10 น. • Ref: SCB8829104</span>
-</div>
-</div>
-<div class="flex flex-col items-end">
-<span class="font-headline-md text-headline-md font-bold text-primary leading-tight">+฿65.00</span>
-<span class="font-label-sm text-label-sm text-secondary font-semibold">QR Payment</span>
-</div>
-</div>
-<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
-<div class="flex items-center gap-1.5">
-<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
-<span class="font-label-sm text-label-sm text-primary font-bold">ตรวจสอบแล้ว • เงินเข้าบัญชีจริง</span>
-</div>
-<button class="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-0.5 hover:underline" onclick="openSlipModal('SCB8829104', '65.00', 'คุณพัชราภรณ์ ม.', 'ไทยพาณิชย์ (SCB EASY)', '14:12:10', 'xxx-x-x9301-2')">
-<span>ดูสลิป</span>
-<span class="material-symbols-outlined text-[14px]">chevron_right</span>
-</button>
-</div>
-</article>
-<!-- Item 3: Older verified transaction -->
-<article class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm border border-surface-container-high/40" id="card-wichian">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
-<span class="material-symbols-outlined text-[20px]">qr_code_2</span>
-</div>
-<div class="flex flex-col">
-<span class="font-title-md text-title-md text-on-surface font-semibold truncate">คุณวิเชียร สมศักดิ์</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">เวลา 13:50:02 น. • Krungthai NEXT</span>
-</div>
-</div>
-<div class="flex flex-col items-end">
-<span class="font-title-lg text-title-lg font-bold text-primary">+฿120.00</span>
-<button class="font-label-sm text-label-sm text-primary underline" onclick="openSlipModal('KTB9920141', '120.00', 'คุณวิเชียร สมศักดิ์', 'กรุงไทย (Krungthai NEXT)', '13:50:02', 'xxx-x-x5541-0')">สลิปแท้ 100%</button>
-</div>
-</article>
+<p class="font-body-md text-body-md text-on-surface-variant py-6 text-center leading-relaxed" id="feedPlaceholder">กำลังโหลดรายการเงินเข้า…</p>
 </div>
 </section>
 <!-- Slip Detail & Verification Evidence Modal / Card Backdrop -->
